@@ -13,7 +13,7 @@
 <button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
 
 @code {
-    [Inject] Service<IPersonModel> service { get; set; }
+    [Inject] Service<IPersonModel>? service { get; set; }
 
     private int currentCount = 0;
 
@@ -26,6 +26,6 @@
 
     protected override async Task OnInitializedAsync()
     {
-        people = await service.GetAsync();
+        people = await service!.GetAsync();
     }
 }

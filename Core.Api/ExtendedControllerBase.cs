@@ -3,18 +3,48 @@
 namespace sdotcode.Repository
 {
     public abstract class ExtendedControllerBase<T> : ControllerBase
+        where T : IStoredItem, new()
     {
-        [HttpGet]
-        [Route("find/{propertyName}/{value}")]
-        public abstract Task<ActionResult> Get([FromRoute] string propertyName, [FromRoute] string value);
+        protected readonly Service<T> Service;
+        public ExtendedControllerBase(Service<T> service)
+        {
+            this.Service = service;
+        }
 
         [HttpGet]
-        public abstract Task<ActionResult> Get(int page=0, int pageSize=10);
-        
+        [Route("find/{propertyName}/{value}")]
+        public virtual async Task<ActionResult> Get([FromRoute] string propertyName, [FromRoute] string value)
+        {
+            return Ok(await Service.GetAsync(propertyName, value));
+        }
+
+        [HttpGet]
+        public virtual async Task<ActionResult> Get(int page = 0, int pageSize = 10)
+        {
+            return Ok(await Service.GetAsync(page, pageSize));
+        }
+
         [HttpDelete]
-        public abstract Task<ActionResult> Delete(int id);
-        
+        public virtual async Task<ActionResult> Delete(int id)
+        {
+            var result = await Service.DeleteAsync(id);
+            if (result)
+            {
+                return Ok(result);
+            }
+            else
+            {
+                return BadRequest();
+            }
+        }
         [HttpPut]
-        public abstract Task<ActionResult> Upsert([FromBody] IEnumerable<T> items);
+        public virtual async Task<ActionResult> Upsert([FromBody] IEnumerable<T> items)
+        {
+            if (items == null || !items.Any())
+            {
+                return BadRequest("Invalid item passed");
+            }
+            return Ok(await Service.AddOrUpdateAsync(items));
+        }
     }
 }
