@@ -37,31 +37,37 @@ public class PersonService : Service<IPersonModel>
 That's all you need for a basic CRUD service abstraction you can **Inject** into your API controller, Blazor component, etc
 
 In order to make it work, you need to plug an IDataStore implemenation into your **DI** container. So far, there are two (2) built-in IDataStore implementations:
+**InMemoryDataStore** and **HttpClientDataStore**
+
+The first one is essentially just an adapter for a List<T> which allows for easy mocking abstractions
+   
+## The Mock class
 ```csharp
-InMemoryDataStore<T>
-```
-
-and
-
-```csharp
-HttpClientDataStore<T>
-```
-
-The first one is essentially just an adapter for a List<T> which allows for easy mocking abstractions.
-  
-  Mock class:
-  ```csharp
-  public PersonServiceMock() 
-        : base(new InMemoryDataStore<IPersonModel>())
+public PersonServiceMock() 
+    : base(new InMemoryDataStore<IPersonModel>())
+{
+    AddOrUpdateAsync(new List<IPersonModel>()
     {
-        AddOrUpdateAsync(new List<IPersonModel>()
-        {
-            new PersonModel { Id = 1, Name = "Curly" },
-            new PersonModel { Id = 2, Name = "Larry" },
-            new PersonModel { Id = 3, Name = "Moe" },
-        });
-    }
-  ```
-  
-  The second one is more interesting.
+        new PersonModel { Id = 1, Name = "Curly" },
+        new PersonModel { Id = 2, Name = "Larry" },
+        new PersonModel { Id = 3, Name = "Moe" },
+    });
+```
+
+ The second IDataStore is more interesting. 
+ ## The HttpClientDataStore
  
+ To make this pattern truly symmetrical, we ensure our controllers follow a REST convention.
+ ### The PeopleController class
+ ```csharp
+[ApiController]
+[Route("[controller]")]
+public class PeopleController : ExtendedControllerBase<IPersonModel>
+{
+    public PeopleController(Service<IPersonModel> service) : base(service)
+    {
+    }
+}
+```
+    
+    
