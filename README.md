@@ -7,9 +7,7 @@ When the entire tech stack of a product is written in one unified **.net**, we c
 Reusing .net code doesn't need to stop at sharing models in a shared project. Since *Dependency Injection* is so first-class in .net, the repository pattern has
 proven its worth in production full-stack .net applications, and lends to being a fantastic developer experience.
 
-In fact, over the past few production .net full-stack applications have really honed in this new pattern that was looking me straight in the eye. Since certain tasks in 
-regard to data acess have become so trivialized by the abstractions brought into the .net ecosystem that we can start *DRY*ing our code across the tech stack somewhat 
-seamlessly.
+In fact, over the past few production .net full-stack applications, I have really *honed in* this new pattern that was looking me straight in the eye the whole time. Since certain tasks (in regard to data acess) have become so trivialized by the abstractions brought into the .net ecosystem, we can start *DRY*ing our code across the tech stack pretty seamlessly.
 
 The repository pattern can be mirrored between the back-end and the front-end, which provides you a seamless approach to dealing with boring CRUD operations across layers
 of the tech stack.
