@@ -57,7 +57,8 @@ public PersonServiceMock()
  The second IDataStore is more interesting. 
  ## The HttpClientDataStore
  
- To make this pattern truly symmetrical, we ensure our controllers follow a REST convention.
+ To make this pattern truly symmetrical when doing HTTP requests to an API, we ensure our controllers follow a REST convention.
+ 
  ### The PeopleController class
  ```csharp
 [ApiController]
@@ -70,4 +71,62 @@ public class PeopleController : ExtendedControllerBase<IPersonModel>
 }
 ```
     
+By subclassing the ExtendedControllerBase, we get a fully-featured CRUD API for that model class.
     
+When HttpClientDataStore is registered as the IDataStore in your front-end app (Blazor, winforms, console app, etc)
+It will make HTTP requests to the appropriate endpoints to handle the data.
+    
+### The Blazor project's Program.cs
+```csharp
+builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:7051/") });
+
+builder.Services.AddScoped<IDataStore<IPersonModel>, HttpClientDataStore<IPersonModel>>();
+builder.Services.AddScoped<Service<IPersonModel>, PersonService>();
+```
+    
+ It's important to note that the HttpClient must be properly configured to point to the API project, and your API project must enable CORS from your front-end applcation.
+
+### The API Project's Program.cs
+```csharp
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(
+        name: MyAllowSpecificOrigins,
+        policy =>
+        {
+            policy.WithOrigins("https://localhost:7220");
+        });
+});
+
+var app = builder.Build();
+
+// Later on...
+app.UseCors(MyAllowSpecificOrigins);
+```
+    
+ And under the hood, the HttpClientDataStore will send requests to the API, which is using its own symmetrical Service repository.
+    
+ 
+Getting data is as simple as:
+    
+### Blazor component
+```csharp
+@foreach(var person in people)
+{
+    <p>@person.Id - @person.Name</p>
+}
+
+@code {
+    [Inject] Service<IPersonModel>? service { get; set; }
+
+   
+
+    IEnumerable<IPersonModel> people = new List<IPersonModel>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        people = await service!.GetAsync();
+    }
+}
+```
