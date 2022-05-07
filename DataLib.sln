@@ -13,6 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ConsoleApplicationExample",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "sdotcode.DataLib.Example.TestAPI", "Examples\TestAPI\sdotcode.DataLib.Example.TestAPI.csproj", "{EE931F3A-D483-49B0-821B-1C830D709C12}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "sdotcode.DataLib.Example.BlazorApp", "sdotcode.DataLib.Example.BlazorApp\sdotcode.DataLib.Example.BlazorApp.csproj", "{62C3DC97-3C0B-49A6-AE37-6A4D60C29114}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{EE931F3A-D483-49B0-821B-1C830D709C12}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EE931F3A-D483-49B0-821B-1C830D709C12}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EE931F3A-D483-49B0-821B-1C830D709C12}.Release|Any CPU.Build.0 = Release|Any CPU
+		{62C3DC97-3C0B-49A6-AE37-6A4D60C29114}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{62C3DC97-3C0B-49A6-AE37-6A4D60C29114}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{62C3DC97-3C0B-49A6-AE37-6A4D60C29114}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{62C3DC97-3C0B-49A6-AE37-6A4D60C29114}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

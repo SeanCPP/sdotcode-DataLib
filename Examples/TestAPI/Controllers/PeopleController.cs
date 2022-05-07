@@ -17,7 +17,7 @@ namespace TestAPI.Controllers
         }
 
         [HttpGet]
-        [Route("{propertyName}/{value}")]
+        [Route("find/{propertyName}/{value}")]
         public override async Task<ActionResult> Get([FromRoute]string propertyName, [FromRoute]string value)
         {
             return Ok(await service.GetAsync(propertyName, value));

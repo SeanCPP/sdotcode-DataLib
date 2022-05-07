@@ -1,3 +1,4 @@
+using sdotcode.DataLib.Core;
 using sdotcode.DataLib.Examples;
 using sdotcode.Repository;
 using sdotcode.Repository.DataStores;
@@ -12,7 +13,17 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<IDataStore<IPersonModel>, InMemoryDataStore<IPersonModel>>();
-builder.Services.AddSingleton<Service<IPersonModel>, PersonService>();
+builder.Services.AddSingleton<Service<IPersonModel>, PersonServiceMock>();
+
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: MyAllowSpecificOrigins,
+                      policy =>
+                      {
+                          policy.WithOrigins("https://localhost:7220");
+                      });
+});
 
 var app = builder.Build();
 
@@ -26,6 +37,8 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+app.UseCors(MyAllowSpecificOrigins);
 
 app.MapControllers();
 

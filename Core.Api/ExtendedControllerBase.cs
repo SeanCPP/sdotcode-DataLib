@@ -5,7 +5,7 @@ namespace sdotcode.Repository
     public abstract class ExtendedControllerBase<T> : ControllerBase
     {
         [HttpGet]
-        [Route("{propertyName}/{value}")]
+        [Route("find/{propertyName}/{value}")]
         public abstract Task<ActionResult> Get([FromRoute] string propertyName, [FromRoute] string value);
 
         [HttpGet]

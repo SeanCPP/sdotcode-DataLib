@@ -63,13 +63,14 @@ public class HttpClientDataStore<T> : DataStore<T>, IDataStore<T> where T : ISto
     }
     public async Task<IEnumerable<T>> GetAsync(string propertyName, object value)
     {
-        var response = await client.GetFromJsonAsync<IEnumerable<T>>($"{controllerName}/{propertyName}/{value}");
+        var uri = $"{controllerName}/find/{propertyName}/{value}";
+        var response = await client.GetFromJsonAsync<IEnumerable<T>>(uri);
         return response ?? new List<T>();
     }
 
     public async Task<IEnumerable<T>> GetAsync(int page=0, int pageSize = 15)
     {
-        var response = await client.GetFromJsonAsync<IEnumerable<T>>($"{controllerName}/{page}/{pageSize}");
+        var response = await client.GetFromJsonAsync<IEnumerable<T>>($"{controllerName}?page={page}&pageSize={pageSize}");
         return response ?? new List<T>();
     }
 
