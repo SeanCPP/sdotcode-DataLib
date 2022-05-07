@@ -120,8 +120,6 @@ Getting data is as simple as:
 @code {
     [Inject] Service<IPersonModel>? service { get; set; }
 
-   
-
     IEnumerable<IPersonModel> people = new List<IPersonModel>();
 
     protected override async Task OnInitializedAsync()
