@@ -132,4 +132,4 @@ Getting data is as simple as:
 ```
     
  ## CONs to this approach:
-    Of course, this is all somewhat coupled to the idea of a RESTful/CRUD data layer. Where the Models drive the whole show. If your data needs can't be molded into a **C**reate **R**ead **U**pdate **D**elete type of paradigm, then this abstraction will fall on its face.
+Of course, this is all somewhat coupled to the idea of a RESTful/CRUD data layer. Where the Models drive the whole show. If your data needs can't be molded into a **C**reate **R**ead **U**pdate **D**elete type of paradigm, then this abstraction will fall on its face.
