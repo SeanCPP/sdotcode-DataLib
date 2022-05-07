@@ -7,10 +7,11 @@ When the entire tech stack of a product is written in one unified **.net**, we c
 Reusing .net code doesn't need to stop at sharing models in a shared project. Since *Dependency Injection* is so first-class in .net, the repository pattern has
 proven its worth in production full-stack .net applications, and lends to being a fantastic developer experience.
 
-In fact, over the past few production .net full-stack applications, I have really *honed in* this new pattern that was looking me straight in the eye the whole time. Since certain tasks (in regard to data acess) have become so trivialized by the abstractions brought into the .net ecosystem, we can start *DRY*ing our code across the tech stack pretty seamlessly.
+I first saw this idea in *Xamarin.Forms*, where platform-dependent classes could be injected across projects. The Shared XAML UI project could ask the DI container for a resource, and in the *Android* and *iOS* project you would register the platform-specific resource.
 
-The repository pattern can be mirrored between the back-end and the front-end, which provides you a seamless approach to dealing with boring CRUD operations across layers
-of the tech stack.
+In fact, over the past few production .net full-stack applications I've worked on, I have really *honed in* on this new pattern that was looking me straight in the eye the whole time. I'm calling it the Symmetrical Repository pattern, becuase it's really just a way to apply the Repository pattern across imaginary boundaries. 
+  
+  Since certain tasks (in regard to data acess) have become so trivialized by the abstractions brought into the .net ecosystem, we can start *DRY*ing our code across the tech stack pretty seamlessly. The repository pattern can be mirrored between the back-end and the front-end, which provides you a seamless approach to dealing with boring CRUD operations across layers of the tech stack.
 
 ## Model class
 ```csharp
@@ -34,7 +35,8 @@ public class PersonService : Service<IPersonModel>
 
 That's all you need for a basic CRUD service abstraction you can **Inject** into your API controller, Blazor component, etc
 
-In order to make it work, you need to plug an IDataStore implemenation into your **DI** container. So far, there are two (2) built-in IDataStore implementations:
+## The IDataStore interface
+In order to make this work, we need to plug an IDataStore implemenation into the **DI** containers. So far, there are two (2) built-in IDataStore implementations (more are coming):
 **InMemoryDataStore** and **HttpClientDataStore**
 
 The first one is essentially just an adapter for a List<T> which allows for easy mocking abstractions
@@ -128,3 +130,6 @@ Getting data is as simple as:
     }
 }
 ```
+    
+ ## CONs to this approach:
+    Of course, this is all somewhat coupled to the idea of a RESTful/CRUD data layer. Where the Models drive the whole show. If your data needs can't be molded into a **C**reate **R**ead **U**pdate **D**elete type of paradigm, then this abstraction will fall on its face.
