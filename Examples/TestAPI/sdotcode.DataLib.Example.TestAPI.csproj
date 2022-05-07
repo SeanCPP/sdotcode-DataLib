@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Core.Api\sdotcode.DataLib.Api.csproj" />
+    <ProjectReference Include="..\..\Core\sdotcode.DataLib.Core.csproj" />
+    <ProjectReference Include="..\Shared\sdotcode.DataLib.Example.Shared.csproj" />
+  </ItemGroup>
+
+</Project>
