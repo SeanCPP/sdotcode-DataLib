@@ -88,6 +88,9 @@ builder.Services.AddScoped<Service<IPersonModel>, PersonService>();
 
 ### The API Project's Program.cs
 ```csharp
+builder.Services.AddSingleton<IDataStore<IPersonModel>, InMemoryDataStore<IPersonModel>>();
+builder.Services.AddSingleton<Service<IPersonModel>, PersonServiceMock>();
+  
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 builder.Services.AddCors(options =>
 {
