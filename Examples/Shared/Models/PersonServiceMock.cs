@@ -1,6 +1,8 @@
 ﻿using sdotcode.Repository;
 using sdotcode.Repository.DataStores;
 
+namespace sdotcode.DataLib.Examples;
+
 public class PersonServiceMock : Service<IPersonModel>
 {
     public PersonServiceMock() 

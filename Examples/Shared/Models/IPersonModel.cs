@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+namespace sdotcode.DataLib.Examples;
+
 [TableName("People")]
 public class IPersonModel : IStoredItem
 {
