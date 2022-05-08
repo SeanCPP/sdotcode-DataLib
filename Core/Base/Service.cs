@@ -25,7 +25,7 @@ public abstract class Service<T> : ErrorProne where T : IStoredItem, new()
     protected virtual Task<T> OnGet(int id) => DataStore.GetAsync(id);
 
     /// <summary>
-    /// On Get Single. Don't invoke this method directly, the system will invoke it. (Use Get(int) instead)
+    /// On Get Single. Don't invoke this method directly, the system will invoke it. (Use Get(string, object) instead)
     /// </summary>
     /// <returns></returns>
     protected virtual Task<IEnumerable<T>> OnGet(string propertyName, object value) => DataStore.GetAsync(propertyName, value);
