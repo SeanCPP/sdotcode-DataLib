@@ -58,7 +58,9 @@ public class HttpClientDataStore<T> : DataStore<T>, IDataStore<T> where T : ISto
 
     public async Task<T> GetAsync(int id)
     {
-        var response = await client.GetFromJsonAsync<T>($"{controllerName}/Id/{id}");
+        var response = (await client.GetFromJsonAsync<IEnumerable<T>>(
+            $"{controllerName}/find/Id/{id}") ?? new List<T>())
+            .FirstOrDefault();
         return response!;
     }
     public async Task<IEnumerable<T>> GetAsync(string propertyName, object value)
