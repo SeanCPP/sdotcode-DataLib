@@ -7,7 +7,10 @@ When the entire tech stack of a product is written in one unified **.net**, we c
 Reusing .net code doesn't need to stop at sharing models in a shared project. Since *Dependency Injection* is so first-class in .net, the repository pattern has
 proven its worth in production full-stack .net applications, and lends to being a fantastic developer experience.
 
-I first saw this idea in *Xamarin.Forms*, where platform-dependent classes could be injected across projects. The Shared XAML UI project could ask the DI container for a resource, and in the *Android* and *iOS* project you would register the platform-specific resource.
+![ex1](https://user-images.githubusercontent.com/4634215/167278164-cf47c839-4cf8-44a2-be20-87fbea3cee7a.png)
+
+
+I first saw this kind of idea in *Xamarin.Forms*, where platform-dependent classes could be injected across projects. The Shared XAML UI project could ask the DI container for a resource, and in the *Android* and *iOS* project you would register the platform-specific resource.
 
 In fact, over the past few production .net full-stack applications I've worked on, I have really *honed in* on this new pattern that was looking me straight in the eye the whole time. I'm calling it the Symmetrical Repository pattern, becuase it's really just a way to apply the Repository pattern across imaginary boundaries. 
   
