@@ -10,10 +10,10 @@
 
 
 @code {
-    [Inject] Service<IPersonModel>? service { get; set; }
+    [Inject] Service<PersonModel>? service { get; set; }
 
 
-    IPersonModel people = new();
+    PersonModel people = new();
     //IEnumerable<IPersonModel> people = new List<IPersonModel>();
 
     protected override async Task OnInitializedAsync()

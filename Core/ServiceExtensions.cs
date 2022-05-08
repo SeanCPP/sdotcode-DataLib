@@ -23,7 +23,7 @@ namespace sdotcode.DataLib.Core
             where T : IStoredItem, new()
             where ServiceType : ReadOnlyService<T>
         {
-            services.AddScoped<IReadOnlyDataStore<T>, HttpClientReadOnlyDataStore<T>>();
+            services.AddScoped<IDataStore<T>, HttpClientDataStore<T>>();
             services.AddScoped<ReadOnlyService<T>, ServiceType>();
             return services;
         }

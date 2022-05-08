@@ -9,8 +9,8 @@ namespace sdotcode.DataLib.Core
     public class ReadOnlyService<T> : ErrorProne, IGetService<T> 
         where T : IStoredItem, new()
     {
-        protected IReadOnlyDataStore<T> DataStore { get; init; }
-        public ReadOnlyService(IReadOnlyDataStore<T> dataStore)
+        protected IDataStore<T> DataStore { get; init; }
+        public ReadOnlyService(IDataStore<T> dataStore)
         {
             this.DataStore = dataStore;
         }

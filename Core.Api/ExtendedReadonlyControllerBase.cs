@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace sdotcode.DataLib.Core.Api
 {
-    public class ExtendedReadonlyControllerBase<T> : ControllerBase 
+    public class ExtendedReadOnlyControllerBase<T> : ControllerBase 
         where T : IStoredItem, new()
     {
         protected readonly ReadOnlyService<T> Service;
-        public ExtendedReadonlyControllerBase(ReadOnlyService<T> service)
+        public ExtendedReadOnlyControllerBase(ReadOnlyService<T> service)
         {
             this.Service = service;
         }

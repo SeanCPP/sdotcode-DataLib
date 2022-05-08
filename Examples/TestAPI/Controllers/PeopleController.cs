@@ -8,9 +8,9 @@ namespace TestAPI.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class PeopleController : ExtendedControllerBase<IPersonModel>
+    public class PeopleController : ExtendedControllerBase<PersonModel>
     {
-        public PeopleController(Service<IPersonModel> service) : base(service)
+        public PeopleController(Service<PersonModel> service) : base(service)
         {
         }
     }

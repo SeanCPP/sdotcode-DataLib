@@ -3,12 +3,12 @@ using sdotcode.DataLib.Core.DataStores;
 
 namespace sdotcode.DataLib.Examples;
 
-public class PersonServiceMock : Service<IPersonModel>
+public class PersonServiceMock : Service<PersonModel>
 {
     public PersonServiceMock() 
-        : base(new InMemoryDataStore<IPersonModel>())
+        : base(new InMemoryDataStore<PersonModel>())
     {
-        AddOrUpdateAsync(new List<IPersonModel>()
+        AddOrUpdateAsync(new List<PersonModel>()
         {
             new PersonModel { Id = 1, Name = "Curly" },
             new PersonModel { Id = 2, Name = "Larry" },

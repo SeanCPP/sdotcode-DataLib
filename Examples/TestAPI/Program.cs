@@ -1,5 +1,6 @@
 using sdotcode.DataLib.Core;
 using sdotcode.DataLib.Core.DataStores;
+using sdotcode.DataLib.Example;
 using sdotcode.DataLib.Examples;
 
 
@@ -12,8 +13,11 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddSingleton<IDataStore<IPersonModel>, InMemoryDataStore<IPersonModel>>();
-builder.Services.AddSingleton<Service<IPersonModel>, PersonServiceMock>();
+builder.Services.AddSingleton<IDataStore<PersonModel>, InMemoryDataStore<PersonModel>>();
+builder.Services.AddSingleton<Service<PersonModel>, PersonServiceMock>();
+
+builder.Services.AddSingleton<IDataStore<PostModel>, InMemoryDataStore<PostModel>>();
+builder.Services.AddSingleton<Service<PostModel>, PostServiceMock>();
 
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 builder.Services.AddCors(options =>

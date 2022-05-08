@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace sdotcode.DataLib.Examples;
 
 [TableName("People")]
-public class IPersonModel : IStoredItem
+public class PersonModel : IStoredItem
 {
     public virtual int Id { get; set; }
     public virtual string? Name { get; set; } = string.Empty;

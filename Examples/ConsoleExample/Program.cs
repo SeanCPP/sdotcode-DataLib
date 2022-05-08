@@ -28,9 +28,9 @@ if (result)
 
 public static class Factory
 {
-    public static Service<IPersonModel> GetPersonService()
+    public static Service<PersonModel> GetPersonService()
     {
-        return new PersonService(GetDataStore<IPersonModel>());
+        return new PersonService(GetDataStore<PersonModel>());
     }
 
     public static IDataStore<T> GetDataStore<T>()
