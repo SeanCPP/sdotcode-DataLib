@@ -1,4 +1,4 @@
-﻿namespace sdotcode.Repository;
+﻿namespace sdotcode.DataLib.Core;
 
 public abstract class ErrorProne
 {

@@ -5,7 +5,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace sdotcode.Repository.DataStores;
+namespace sdotcode.DataLib.Core.DataStores;
 
 public class InMemoryDataStore<T> : DataStore<T>, IDataStore<T> where T : IStoredItem, new()
 {

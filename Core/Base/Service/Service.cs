@@ -1,9 +1,8 @@
-﻿using DAL.Lib.Base;
-using System.Reflection;
+﻿using System.Reflection;
 
-namespace sdotcode.Repository;
+namespace sdotcode.DataLib.Core;
 
-public abstract class Service<T> : ErrorProne where T : IStoredItem, new()
+public abstract class Service<T> : ErrorProne, IGetService<T>, IUpsertService<T>, IDeleteService<T> where T : IStoredItem, new()
 {
     protected IDataStore<T> DataStore { get; init; }
 

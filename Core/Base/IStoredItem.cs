@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace sdotcode.Repository;
+namespace sdotcode.DataLib.Core;
 
 public interface IStoredItem
 {

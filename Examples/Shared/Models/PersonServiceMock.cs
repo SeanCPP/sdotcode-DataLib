@@ -1,5 +1,5 @@
-﻿using sdotcode.Repository;
-using sdotcode.Repository.DataStores;
+﻿using sdotcode.DataLib.Core;
+using sdotcode.DataLib.Core.DataStores;
 
 namespace sdotcode.DataLib.Examples;
 

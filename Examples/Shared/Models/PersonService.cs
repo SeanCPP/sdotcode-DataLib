@@ -1,4 +1,4 @@
-﻿using sdotcode.Repository;
+﻿using sdotcode.DataLib.Core;
 
 namespace sdotcode.DataLib.Examples;
 /// <summary>

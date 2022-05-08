@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using sdotcode.DataLib.Core;
 
-namespace sdotcode.Repository
+namespace sdotcode.DataLib.Core.Api
 {
     public abstract class ExtendedControllerBase<T> : ControllerBase
         where T : IStoredItem, new()

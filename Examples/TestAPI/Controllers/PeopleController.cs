@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using sdotcode.DataLib.Core;
+using sdotcode.DataLib.Core.Api;
 using sdotcode.DataLib.Examples;
-using sdotcode.Repository;
 
 namespace TestAPI.Controllers
 {

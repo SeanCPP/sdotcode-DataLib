@@ -1,5 +1,5 @@
 ﻿
-namespace sdotcode.Repository;
+namespace sdotcode.DataLib.Core;
 
 public class None 
 { 

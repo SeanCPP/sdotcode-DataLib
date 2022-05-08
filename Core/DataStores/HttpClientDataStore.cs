@@ -6,7 +6,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace sdotcode.Repository.DataStores;
+namespace sdotcode.DataLib.Core.DataStores;
 
 /// <summary>
 /// A generic datastore that uses an HttpClient to map to a basic CRUD (RESTful) API controller. The API Controller MUST

@@ -2,20 +2,22 @@
 
 <PageTitle>Counter</PageTitle>
 
-@foreach(var person in people)
+@*@foreach(var person in people)
 {
     <p>@person.Id - @person.Name</p>
-}
+}*@
+<p>@people.Id - @people.Name</p>
+
 
 @code {
     [Inject] Service<IPersonModel>? service { get; set; }
 
-   
 
-    IEnumerable<IPersonModel> people = new List<IPersonModel>();
+    IPersonModel people = new();
+    //IEnumerable<IPersonModel> people = new List<IPersonModel>();
 
     protected override async Task OnInitializedAsync()
     {
-        people = await service!.GetAsync();
+        people = await service!.GetAsync(1);
     }
 }

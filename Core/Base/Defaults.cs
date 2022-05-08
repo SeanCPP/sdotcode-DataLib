@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DAL.Lib.Base
+namespace sdotcode.DataLib.Core
 {
     internal static class Defaults
     {
