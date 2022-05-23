@@ -66,15 +66,14 @@ public abstract class Service<T> : ErrorProne where T : IStoredItem, new()
     protected virtual Task OnException(Exception ex) => DataStore.HandleException(ex);
 
 
-    protected sealed override Task HandleException(Exception ex)
-    {
-        return OnException(ex);
-    }
+    #region Public API
 
-    public Task<IEnumerable<T>> GetAsync(PagingInfo? pagingOptions = null) 
-        => Try<IEnumerable<T>, List<T>>(async () => await OnGet(pagingOptions ?? new()));
+    protected sealed override Task HandleException(Exception ex) => OnException(ex);
 
     public Task<T> GetAsync(int id) => Try(async () => await OnGet(id));
+    
+    public Task<IEnumerable<T>> GetAsync(PagingInfo? pagingOptions = null) 
+        => Try<IEnumerable<T>, List<T>>(async () => await OnGet(pagingOptions ?? new()));
 
     public Task<IEnumerable<T>> GetAsync(string propertyName, object value, PagingInfo? pagingOptions = null) 
         => Try<IEnumerable<T>, List<T>>(async () => await OnGet(propertyName, value, pagingOptions ?? new()));
@@ -150,16 +149,12 @@ public abstract class Service<T> : ErrorProne where T : IStoredItem, new()
         });
     }
 
-    public Task<T> AddOrUpdateAsync(T entity)
-    {
-        return Try(async () => await OnAddOrUpdate(entity));
-    }
+    public Task<T> AddOrUpdateAsync(T entity) => Try(async () => await OnAddOrUpdate(entity));
+    
     public Task<IEnumerable<T>> AddOrUpdateAsync(IEnumerable<T> items)
-    {
-        return Try<IEnumerable<T>, List<T>>(async () => await OnAddOrUpdate(items));
-    }
-    public Task<bool> DeleteAsync(int id)
-    {
-        return Try(() => OnDelete(id));
-    }
+        => Try<IEnumerable<T>, List<T>>(async () => await OnAddOrUpdate(items));
+    
+    public Task<bool> DeleteAsync(int id) => Try(() => OnDelete(id));
+
+    #endregion
 }
