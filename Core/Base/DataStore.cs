@@ -4,7 +4,18 @@ namespace sdotcode.DataLib.Core;
 
 public abstract class DataStore<T>
 {
-    protected (Type, object) GetPropertyValue(object item, string propertyName)
+    protected object GetPropertyValue(object item, string propertyName)
+    {
+        var properties = typeof(T).GetProperties();
+        var prop = properties.FirstOrDefault(p => p.Name == propertyName);
+        if (prop is null)
+        {
+            throw new ArgumentException("Invalid property name was provided.");
+        }
+        return prop!.GetValue(item)!;
+    }
+
+    protected (Type, object) GetPropertyTypeAndValue(object item, string propertyName)
     {
         var properties = typeof(T).GetProperties();
         var prop = properties.FirstOrDefault(p => p.Name == propertyName);
@@ -16,7 +27,7 @@ public abstract class DataStore<T>
     }
     protected bool ComparePropertyWithValue(object item, string propertyName, object value)
     {
-        var (type, result) = GetPropertyValue(item, propertyName);
+        var (type, result) = GetPropertyTypeAndValue(item, propertyName);
         var val1 = Convert.ChangeType(result, type);
         var val2 = Convert.ChangeType(value, type);
         return result is not null && val1.Equals(val2);
@@ -28,7 +39,7 @@ public abstract class DataStore<T>
         {
             return ((TableNameAttribute)attribute).Name;
         }
-        return type.Name;
+        return $"{type.Name}s";
     }
 }
 

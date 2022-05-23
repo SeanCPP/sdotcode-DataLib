@@ -11,5 +11,7 @@ namespace sdotcode.DataLib.Examples;
 public class PersonModel : IStoredItem
 {
     public virtual int Id { get; set; }
-    public virtual string? Name { get; set; } = string.Empty;
+
+    [Searchable]
+    public virtual string Name { get; set; } = string.Empty;
 }

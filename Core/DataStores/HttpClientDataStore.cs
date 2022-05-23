@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http.Json;
 using System.Text;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -59,21 +60,35 @@ public class HttpClientDataStore<T> : DataStore<T>, IDataStore<T> where T : ISto
     public async Task<T> GetAsync(int id)
     {
         var response = (await client.GetFromJsonAsync<IEnumerable<T>>(
-            $"{controllerName}/find/Id/{id}") ?? new List<T>())
+            $"{controllerName}/find/Id/{id}?page=0&pageSize=1") ?? new List<T>())
             .FirstOrDefault();
         return response!;
     }
-    public async Task<IEnumerable<T>> GetAsync(string propertyName, object value)
+    public async Task<IEnumerable<T>> GetAsync(string propertyName, object value, PagingInfo? paging = null)
     {
-        var uri = $"{controllerName}/find/{propertyName}/{value}";
+        paging ??= new();
+        var uri = $"{controllerName}/find/{propertyName}/{value}?page={paging.Page}&pagSize={paging.PageSize}";
         var response = await client.GetFromJsonAsync<IEnumerable<T>>(uri);
         return response ?? new List<T>();
     }
 
-    public async Task<IEnumerable<T>> GetAsync(int page=0, int pageSize = 15)
+    public async Task<IEnumerable<T>> GetAsync(PagingInfo? paging = null)
     {
-        var response = await client.GetFromJsonAsync<IEnumerable<T>>($"{controllerName}?page={page}&pageSize={pageSize}");
+        paging ??= new();
+        var response = await client.GetFromJsonAsync<IEnumerable<T>>($"{controllerName}?page={paging.Page}&pageSize={paging.PageSize}");
         return response ?? new List<T>();
+    }
+    public async Task<IEnumerable<T>> SearchAsync(string query, PagingInfo? paging = null, params string[] propertiesToSearch)
+    {
+        paging ??= new();
+        var sb = new StringBuilder();
+        foreach (var propName in propertiesToSearch) 
+        {
+            sb.Append($"searchProperties={propName}&");
+        }
+
+        var uri = $"{controllerName}/search?{sb}query={query}&page={paging.Page}&pageSize={paging.PageSize}";
+        return await client.GetFromJsonAsync<IEnumerable<T>>(uri) ?? new List<T>();      
     }
 
     public Task HandleException(Exception ex)
@@ -82,5 +97,4 @@ public class HttpClientDataStore<T> : DataStore<T>, IDataStore<T> where T : ISto
         Console.WriteLine(ex.Message);
         return Task.CompletedTask;
     }
-
 }

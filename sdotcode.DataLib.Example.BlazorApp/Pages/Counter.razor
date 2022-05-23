@@ -2,22 +2,26 @@
 
 <PageTitle>Counter</PageTitle>
 
-@*@foreach(var person in people)
+@foreach(var person in people)
 {
     <p>@person.Id - @person.Name</p>
-}*@
-<p>@people.Id - @people.Name</p>
+}
+
+<input type="text" @bind-value=nameSearch />
+<button @onclick=Search>Search</button>
 
 
 @code {
     [Inject] Service<PersonModel>? service { get; set; }
 
+    private string nameSearch = string.Empty;
 
-    PersonModel people = new();
-    //IEnumerable<IPersonModel> people = new List<IPersonModel>();
+    IEnumerable<PersonModel> people = new List<PersonModel>();
 
-    protected override async Task OnInitializedAsync()
+    private async Task Search()
     {
-        people = await service!.GetAsync(1);
+        people = await service!.SearchAsync(nameSearch, null, 
+            x => x.Name, 
+            x => x.Id);
     }
 }

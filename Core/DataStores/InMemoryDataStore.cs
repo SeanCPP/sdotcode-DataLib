@@ -11,9 +11,14 @@ public class InMemoryDataStore<T> : DataStore<T>, IDataStore<T> where T : IStore
 {
     private readonly List<T> db = new();
 
-    public Task<IEnumerable<T>> GetAsync(string propertyName, object value)
+    public Task<IEnumerable<T>> GetAsync(string propertyName, object value, PagingInfo? paging = null)
     {
-        var results = db.Where(item => ComparePropertyWithValue(item, propertyName, value));
+        paging ??= new();
+
+        var results = db
+            .Where(item => ComparePropertyWithValue(item, propertyName, value))
+            .Skip(paging.Page * paging.PageSize)
+            .Take(paging.PageSize);
         return Task.FromResult(results)!;
     }
 
@@ -74,14 +79,32 @@ public class InMemoryDataStore<T> : DataStore<T>, IDataStore<T> where T : IStore
         return Task.FromResult(db.FirstOrDefault(item => item.Id == id))!;
     }
 
-    public Task<IEnumerable<T>> GetAsync(int page=0, int pageSize=15)
+    public Task<IEnumerable<T>> GetAsync(PagingInfo? paging = null)
     {
+        paging ??= new();
         return Task.FromResult(
             db
-            .Skip(page*pageSize)
-            .Take(pageSize)
-            .ToArray()
-            .AsEnumerable());
+            .Skip(paging.Page * paging.PageSize)
+            .Take(paging.PageSize));
+    }
+    public Task<IEnumerable<T>> SearchAsync(string query, PagingInfo? paging = null, params string[] propertiesToSearch)
+    {
+        paging ??= new();
+        var items = new List<T>();
+        foreach (var propertyName in propertiesToSearch)
+        {
+            var selection = db.Where(item => 
+                GetPropertyValue(item, propertyName)
+                .ToString()?
+                .ToLower()
+                .Contains(query.ToLower()) ?? false);
+            
+            if (selection.Any())
+            {
+                items.AddRange(selection);
+            }
+        }
+        return Task.FromResult<IEnumerable<T>>(items);
     }
 
     public Task HandleException(Exception ex)
@@ -89,5 +112,6 @@ public class InMemoryDataStore<T> : DataStore<T>, IDataStore<T> where T : IStore
         Console.WriteLine("Handled in the datastore");
         return Task.CompletedTask;
     }
+
 }
 

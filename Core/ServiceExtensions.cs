@@ -18,14 +18,5 @@ namespace sdotcode.DataLib.Core
             services.AddScoped<Service<T>, ServiceType>();
             return services;
         }
-
-        public static IServiceCollection AddHttpClientReadonlyDataStore<T, ServiceType>(this IServiceCollection services)
-            where T : IStoredItem, new()
-            where ServiceType : ReadOnlyService<T>
-        {
-            services.AddScoped<IDataStore<T>, HttpClientDataStore<T>>();
-            services.AddScoped<ReadOnlyService<T>, ServiceType>();
-            return services;
-        }
     }
 }

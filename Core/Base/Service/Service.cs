@@ -1,21 +1,16 @@
-﻿using System.Reflection;
+﻿using System.Linq.Expressions;
+using System.Reflection;
 
 namespace sdotcode.DataLib.Core;
 
-public abstract class Service<T> : ErrorProne, IGetService<T>, IUpsertService<T>, IDeleteService<T> where T : IStoredItem, new()
+public abstract class Service<T> : ErrorProne where T : IStoredItem, new()
 {
     protected IDataStore<T> DataStore { get; init; }
 
     public Service(IDataStore<T> dataStore)
     {
-        this.DataStore = dataStore;
+        DataStore = dataStore;
     }
-
-    /// <summary>
-    /// On Get Multiple. Don't invoke this method directly, the system will invoke it. (Use Get() instead)
-    /// </summary>
-    /// <returns></returns>
-    protected virtual Task<IEnumerable<T>> OnGet(int page=0, int pageSize=Defaults.PageSize) => DataStore.GetAsync(page, pageSize);
 
     /// <summary>
     /// On Get Single. Don't invoke this method directly, the system will invoke it. (Use Get(int) instead)
@@ -24,26 +19,40 @@ public abstract class Service<T> : ErrorProne, IGetService<T>, IUpsertService<T>
     protected virtual Task<T> OnGet(int id) => DataStore.GetAsync(id);
 
     /// <summary>
-    /// On Get Single. Don't invoke this method directly, the system will invoke it. (Use Get(string, object) instead)
+    /// On Get Multiple. Don't invoke this method directly, the system will invoke it. (Use Get instead)
     /// </summary>
     /// <returns></returns>
-    protected virtual Task<IEnumerable<T>> OnGet(string propertyName, object value) => DataStore.GetAsync(propertyName, value);
+    protected virtual Task<IEnumerable<T>> OnGet(PagingInfo paging) => DataStore.GetAsync(paging);
 
     /// <summary>
-    /// On Update Single. Don't invoke this method directly, the system will invoke it. (Use Update(entity) instead)
+    /// On Get Multiple. Don't invoke this method directly, the system will invoke it. (Use Get instead)
+    /// </summary>
+    /// <returns></returns>
+    protected virtual Task<IEnumerable<T>> OnGet(string propertyName, object value, PagingInfo paging) 
+        => DataStore.GetAsync(propertyName, value, paging);
+
+    /// <summary>
+    /// On Get Multiple. Don't invoke this method directly, the system will invoke it. (Use Get instead)
+    /// </summary>
+    /// <returns></returns>
+    protected virtual Task<IEnumerable<T>> OnSearch(string query, PagingInfo paging, params string[] propertiesToSearch) 
+        => DataStore.SearchAsync(query, paging, propertiesToSearch);
+
+    /// <summary>
+    /// On Update Single. Don't invoke this method directly, the system will invoke it. (Use Update instead)
     /// </summary>
     /// <returns></returns>
     protected virtual Task<T> OnAddOrUpdate(T entity) => DataStore.AddOrUpdateAsync(entity);
 
     /// <summary>
-    /// On Update Single. Don't invoke this method directly, the system will invoke it. (Use Update(entity) instead)
+    /// On Update Single. Don't invoke this method directly, the system will invoke it. (Use Update instead)
     /// </summary>
     /// <returns></returns>
     protected virtual Task<IEnumerable<T>> OnAddOrUpdate(IEnumerable<T> items) => DataStore.AddOrUpdateAsync(items);
 
 
     /// <summary>
-    /// On Delete Single. Don't invoke this method directly, the system will invoke it. (Use Delete(predicate) instead)
+    /// On Delete Single. Don't invoke this method directly, the system will invoke it. (Use Delete instead)
     /// </summary>
     /// <returns></returns>
     protected virtual Task<bool> OnDelete(int id) => DataStore.DeleteAsync(id);
@@ -62,18 +71,85 @@ public abstract class Service<T> : ErrorProne, IGetService<T>, IUpsertService<T>
         return OnException(ex);
     }
 
-    public Task<IEnumerable<T>> GetAsync(int page = 0, int pageSize = Defaults.PageSize)
+    public Task<IEnumerable<T>> GetAsync(PagingInfo? paging = null) 
+        => Try<IEnumerable<T>, List<T>>(async () => await OnGet(paging ?? new()));
+
+    public Task<T> GetAsync(int id) => Try(async () => await OnGet(id));
+
+    public Task<IEnumerable<T>> GetAsync(string propertyName, object value, PagingInfo? paging = null) 
+        => Try<IEnumerable<T>, List<T>>(async () => await OnGet(propertyName, value, paging ?? new()));
+
+    public Task<IEnumerable<T>> GetAsync(Expression<Func<T, object?>> propertyExpr,
+        object value,
+        PagingInfo? paging = null)
     {
-        return Try<IEnumerable<T>, List<T>>(async () => await OnGet(page, pageSize));
+        return Try<IEnumerable<T>, List<T>>(async () =>
+        {
+            if (propertyExpr is null || propertyExpr.Body is null)
+            {
+                throw new ArgumentException("Invalid property expression provided.");
+            }
+
+            if (propertyExpr.Body is not MemberExpression body)
+            {
+                UnaryExpression ubody = (UnaryExpression)propertyExpr.Body;
+                body = ubody?.Operand as MemberExpression ?? throw new ArgumentException("Invalid property expression provided."); ;
+            }
+
+            return await Try<IEnumerable<T>, List<T>>(async () => await OnGet(body!.Member.Name, value, paging ?? new()));
+        });
     }
-    public Task<T> GetAsync(int id)
+
+    public Task<IEnumerable<T>> SearchAsync(string query, PagingInfo? paging = null, params string[] propertiesToSearch)
     {
-        return Try(async () => await OnGet(id));
+        return Try<IEnumerable<T>, List<T>>(async () => 
+        {
+            var actualSearchParams = new List<string>();
+            foreach (var property in propertiesToSearch)
+            {
+                var prop = typeof(T).GetProperty(property);
+                if (prop is null)
+                {
+                    continue;
+                }
+
+                var attribute = prop.GetCustomAttribute(typeof(SearchableAttribute));
+                if (attribute is not null)
+                {
+                    actualSearchParams.Add(property);
+                }
+            }
+            return await OnSearch(query, paging ?? new(), actualSearchParams.ToArray());
+        });
     }
-    public Task<IEnumerable<T>> GetAsync(string propertyName, object value)
+
+    public Task<IEnumerable<T>> SearchAsync(string query, 
+        PagingInfo? paging = null, 
+        params Expression<Func<T, object>>[] propertiesToSearch)
     {
-        return Try<IEnumerable<T>, List<T>>(async () => await OnGet(propertyName, value));
+        return Try<IEnumerable<T>, List<T>>(async () => 
+        { 
+            var propertyStrings = new List<string>();
+
+            foreach (var propertyExpr in propertiesToSearch)
+            {
+                if (propertyExpr is null || propertyExpr.Body is null)
+                {
+                    throw new ArgumentException("Invalid property expression(s) provided.");
+                }
+
+                if (propertyExpr.Body is not MemberExpression body)
+                {
+                    UnaryExpression ubody = (UnaryExpression)propertyExpr.Body;
+                    body = ubody?.Operand as MemberExpression ?? throw new ArgumentException("Invalid property expression(s) provided."); ;
+                }
+
+                propertyStrings.Add(body!.Member.Name);
+            }
+            return await SearchAsync(query, paging ?? new(), propertyStrings.ToArray());
+        });
     }
+
     public Task<T> AddOrUpdateAsync(T entity)
     {
         return Try(async () => await OnAddOrUpdate(entity));

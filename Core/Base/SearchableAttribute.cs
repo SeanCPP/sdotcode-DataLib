@@ -6,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace sdotcode.DataLib.Core
 {
-    public static class Defaults
+    [AttributeUsage(AttributeTargets.Property)]
+    public class SearchableAttribute : Attribute
     {
-        public const int PageSize = 10;
     }
 }

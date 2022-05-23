@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace sdotcode.DataLib.Core;
 
+[AttributeUsage(AttributeTargets.Class)]
 public class TableNameAttribute : Attribute
 {
     public TableNameAttribute(string name)
