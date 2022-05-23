@@ -67,7 +67,7 @@ public class HttpClientDataStore<T> : DataStore<T>, IDataStore<T> where T : ISto
     public async Task<IEnumerable<T>> GetAsync(string propertyName, object value, PagingInfo? paging = null)
     {
         paging ??= new();
-        var uri = $"{controllerName}/find/{propertyName}/{value}?page={paging.Page}&pagSize={paging.PageSize}";
+        var uri = $"{controllerName}/find/{propertyName}/{value}?page={paging.Page}&pageSize={paging.PageSize}";
         var response = await client.GetFromJsonAsync<IEnumerable<T>>(uri);
         return response ?? new List<T>();
     }
