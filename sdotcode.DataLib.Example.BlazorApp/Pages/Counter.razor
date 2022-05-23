@@ -20,7 +20,8 @@
 
     private async Task Search()
     {
-        people = await service!.SearchAsync(nameSearch, null, 
+        people = await service!.SearchAsync(nameSearch, 
+            pagingOptions: default,
             x => x.Name, 
             x => x.Id); // This won't get searched since the Id property on PersonModel doesn't have [Searchable]
     }
