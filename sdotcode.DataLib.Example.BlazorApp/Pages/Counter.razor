@@ -22,6 +22,6 @@
     {
         people = await service!.SearchAsync(nameSearch, null, 
             x => x.Name, 
-            x => x.Id);
+            x => x.Id); // This won't get searched since the Id property on PersonModel doesn't have [Searchable]
     }
 }
