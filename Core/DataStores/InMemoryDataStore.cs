@@ -16,7 +16,7 @@ public class InMemoryDataStore<T> : DataStore<T>, IDataStore<T> where T : IStore
         paging ??= new();
 
         var results = db
-            .Where(item => ComparePropertyWithValue(item, propertyName, value))
+            .Where(item => ComparePropertyValue(item, propertyName, value))
             .Skip(paging.Page * paging.PageSize)
             .Take(paging.PageSize);
         return Task.FromResult(results)!;
@@ -27,7 +27,7 @@ public class InMemoryDataStore<T> : DataStore<T>, IDataStore<T> where T : IStore
         if (db.Contains(item))
         {
             var toUpdate = db.FirstOrDefault(x => x.Id == item.Id);
-            if(toUpdate != null)
+            if (toUpdate != null)
             {
                 toUpdate = item;
                 return Task.FromResult(toUpdate);
@@ -42,7 +42,7 @@ public class InMemoryDataStore<T> : DataStore<T>, IDataStore<T> where T : IStore
 
     public Task<IEnumerable<T>> AddOrUpdateAsync(IEnumerable<T> items)
     {
-        foreach(var item in items)
+        foreach (var item in items)
         {
             if (db.Contains(item))
             {
@@ -93,12 +93,14 @@ public class InMemoryDataStore<T> : DataStore<T>, IDataStore<T> where T : IStore
         var items = new List<T>();
         foreach (var propertyName in propertiesToSearch)
         {
-            var selection = db.Where(item => 
+            var selection = db.Where(item =>
                 GetPropertyValue(item, propertyName)
                 .ToString()?
                 .ToLower()
-                .Contains(query.ToLower()) ?? false);
-            
+                .Contains(query.ToLower()) ?? false)
+                .Skip(paging.Page * paging.PageSize)
+                .Take(paging.PageSize);
+
             if (selection.Any())
             {
                 items.AddRange(selection);

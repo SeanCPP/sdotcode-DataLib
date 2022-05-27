@@ -25,7 +25,7 @@ public abstract class DataStore<T>
         }
         return (prop.PropertyType, prop!.GetValue(item)!);
     }
-    protected bool ComparePropertyWithValue(object item, string propertyName, object value)
+    protected bool ComparePropertyValue(object item, string propertyName, object value)
     {
         var (type, result) = GetPropertyTypeAndValue(item, propertyName);
         var val1 = Convert.ChangeType(result, type);
