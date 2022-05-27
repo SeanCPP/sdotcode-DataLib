@@ -65,10 +65,9 @@ public abstract class Service<T> : ErrorProne where T : IStoredItem, new()
     /// <returns></returns>
     protected virtual Task OnException(Exception ex) => DataStore.HandleException(ex);
 
+    protected sealed override Task HandleException(Exception ex) => OnException(ex);
 
     #region Public API
-
-    protected sealed override Task HandleException(Exception ex) => OnException(ex);
 
     public Task<T> GetAsync(int id) => Try(async () => await OnGet(id));
     
@@ -82,7 +81,7 @@ public abstract class Service<T> : ErrorProne where T : IStoredItem, new()
         object value,
         PagingInfo? pagingOptions = null)
     {
-        return Try<IEnumerable<T>, List<T>>(async () =>
+        return Try<IEnumerable<T>, List<T>>(() =>
         {
             if (propertyExpr is null || propertyExpr.Body is null)
             {
@@ -95,13 +94,13 @@ public abstract class Service<T> : ErrorProne where T : IStoredItem, new()
                 body = ubody?.Operand as MemberExpression ?? throw new ArgumentException("Invalid property expression provided."); ;
             }
 
-            return await Try<IEnumerable<T>, List<T>>(async () => await OnGet(body!.Member.Name, value, pagingOptions ?? new()));
+            return OnGet(body!.Member.Name, value, pagingOptions ?? new());
         });
     }
 
     public Task<IEnumerable<T>> SearchAsync(string query, PagingInfo? pagingOptions = null, params string[] propertiesToSearch)
     {
-        return Try<IEnumerable<T>, List<T>>(async () => 
+        return Try<IEnumerable<T>, List<T>>(() => 
         {
             var actualSearchParams = new List<string>();
             foreach (var property in propertiesToSearch)
@@ -112,13 +111,13 @@ public abstract class Service<T> : ErrorProne where T : IStoredItem, new()
                     continue;
                 }
 
-                var attribute = prop.GetCustomAttribute(typeof(SearchableAttribute));
+                var attribute = prop.GetCustomAttribute(typeof(SearchableAttribute), inherit: false);
                 if (attribute is not null)
                 {
                     actualSearchParams.Add(property);
                 }
             }
-            return await OnSearch(query, pagingOptions ?? new(), actualSearchParams.ToArray());
+            return OnSearch(query, pagingOptions ?? new(), actualSearchParams.ToArray());
         });
     }
 
@@ -126,7 +125,7 @@ public abstract class Service<T> : ErrorProne where T : IStoredItem, new()
         PagingInfo? pagingOptions = null, 
         params Expression<Func<T, object>>[] propertiesToSearch)
     {
-        return Try<IEnumerable<T>, List<T>>(async () => 
+        return Try<IEnumerable<T>, List<T>>(() => 
         { 
             var propertyStrings = new List<string>();
 
@@ -145,14 +144,14 @@ public abstract class Service<T> : ErrorProne where T : IStoredItem, new()
 
                 propertyStrings.Add(body!.Member.Name);
             }
-            return await SearchAsync(query, pagingOptions ?? new(), propertyStrings.ToArray());
+            return SearchAsync(query, pagingOptions ?? new(), propertyStrings.ToArray());
         });
     }
 
-    public Task<T> AddOrUpdateAsync(T entity) => Try(async () => await OnAddOrUpdate(entity));
+    public Task<T> AddOrUpdateAsync(T entity) => Try(() => OnAddOrUpdate(entity));
     
     public Task<IEnumerable<T>> AddOrUpdateAsync(IEnumerable<T> items)
-        => Try<IEnumerable<T>, List<T>>(async () => await OnAddOrUpdate(items));
+        => Try<IEnumerable<T>, List<T>>(() => OnAddOrUpdate(items));
     
     public Task<bool> DeleteAsync(int id) => Try(() => OnDelete(id));
 
