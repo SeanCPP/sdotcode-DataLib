@@ -32,9 +32,9 @@ public class PersonService : Service<IPersonModel>
  ```csharp
 [ApiController]
 [Route("[controller]")]
-public class PeopleController : ExtendedControllerBase<IPersonModel>
+public class PeopleController : ExtendedControllerBase<PersonModel>
 {
-    public PeopleController(Service<IPersonModel> service) : base(service) { }
+    public PeopleController(Service<PersonModel> service) : base(service) { }
 }
 ```
 By subclassing the ExtendedControllerBase in your code, you get a fully-functioning CRUD+Search API for that model class generated automatically:
