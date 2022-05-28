@@ -127,8 +127,9 @@ app.UseCors(MyAllowSpecificOrigins);
   
   ### Heads up
   
-  If you plan on using this as an out-of-the-box solution, I'd highly recommend forking the project instead of cloning it directly from here. This is very much so a work-in-progress, and it might change. This is not a stable, production-ready product yet, as ideas are being experimented with and improved upon. This project does not make any promises regarding security or stability of data access. You'll need to rely on applying security measures (auth, roles, etc) to the data access in API controllers and database operations as you normally would elsewhere.
- This can become a stable production-ready product with the help of community contributions. If this seems like something you or your company could benefit from, feel free to get involved!
+  If you plan on using this as an out-of-the-box solution, I'd highly recommend forking the project instead of cloning it directly from here. This is very much so a work-in-progress, and it might change. This is not a stable, production-ready product yet, as ideas are being experimented with and improved upon. This project does not make any promises regarding security or stability of data access. You'll need to rely on applying security measures (auth, roles, etc) to the data access in API controllers and database operations as you normally would elsewhere. 
+  
+  This can become a stable production-ready product with the help of community contributions. If this seems like something you or your company could benefit from, feel free to get involved!
   
   ### Error Handling
   
