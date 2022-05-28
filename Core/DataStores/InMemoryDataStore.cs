@@ -133,6 +133,4 @@ public class InMemoryDataStore<T> : DataStore<T>, IDataStore<T> where T : IStore
         Console.WriteLine("Handled in the datastore");
         return Task.CompletedTask;
     }
-
 }
-
