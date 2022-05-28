@@ -91,10 +91,7 @@ When using the Service class with HttpClientDataStore registered as the IDataSto
 If you need to add role authorization to any controller method, you can always override the method in your controller and add the [Authorize] attribute:
 ```csharp
 [Authorize]
-public override Task<ActionResult> Upsert([FromBody] IEnumerable<PersonModel> items)
-{
-    return base.Upsert(items);
-} 
+public override Task<ActionResult> Upsert([FromBody] IEnumerable<PersonModel> items) => base.Upsert(items);
 ```
 
 ## Wiring up the DI
