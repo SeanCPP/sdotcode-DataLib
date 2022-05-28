@@ -6,12 +6,12 @@ This isn't intended to replace any ORM or database libraries. This is a symmetri
   
 ![Mirrored Repository Pattern](/diagramv2.png?raw=true "Diagram demonstrating the architecture of this project")
 
-# Using this as your **_solution-wide_** repository layer
+# Using this as a **_solution-wide_** repository layer
 
 ### Model class
 ```csharp
 [TableName("People")]
-public class IPersonModel : IStoredItem
+public class PersonModel : IStoredItem
 {
     public virtual int Id { get; set; }
     
@@ -22,9 +22,9 @@ public class IPersonModel : IStoredItem
 
 ### Service class
 ```csharp
-public class PersonService : Service<IPersonModel>
+public class PersonService : Service<PersonModel>
 {
-    public PersonService(IDataStore<IPersonModel> dataStore) : base(dataStore) { }
+    public PersonService(IDataStore<PersonModel> dataStore) : base(dataStore) { }
 }
 ```
 
@@ -32,9 +32,9 @@ public class PersonService : Service<IPersonModel>
  ```csharp
 [ApiController]
 [Route("[controller]")]
-public class PeopleController : ExtendedControllerBase<IPersonModel>
+public class PeopleController : ExtendedControllerBase<PersonModel>
 {
-    public PeopleController(Service<IPersonModel> service) : base(service) { }
+    public PeopleController(Service<PersonModel> service) : base(service) { }
 }
 ```
 By subclassing the ExtendedControllerBase in your code, you get a fully-functioning CRUD+Search API for that model class generated automatically:
@@ -99,14 +99,16 @@ It's important to note that in order for the system to automatically wire up and
 ```csharp
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:7051/") }); // URL to the API project
 
-builder.Services.AddScoped<IDataStore<IPersonModel>, HttpClientDataStore<IPersonModel>>();
-builder.Services.AddScoped<Service<IPersonModel>, PersonService>();
+builder.Services.AddWebApiRepository<PersonModel, PersonService>();
+// The above line is a shortcut for:
+// builder.Services.AddScoped<IDataStore<PersonModel>, HttpClientDataStore<PersonModel>>();
+// builder.Services.AddScoped<Service<PersonModel>, PersonService>();
 ```
 
 ### The API Project's Program.cs
 ```csharp
-builder.Services.AddSingleton<IDataStore<IPersonModel>, InMemoryDataStore<IPersonModel>>();
-builder.Services.AddSingleton<Service<IPersonModel>, PersonServiceMock>();
+builder.Services.AddSingleton<IDataStore<PersonModel>, InMemoryDataStore<PersonModel>>();
+builder.Services.AddSingleton<Service<PersonModel>, PersonServiceMock>();
   
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 builder.Services.AddCors(options =>
@@ -148,6 +150,6 @@ public class PersonService : Service<PersonModel>
 
   ### Heads up
   
-  If you plan on using this as an out-of-the-box solution, I'd highly recommend forking the project instead of cloning it directly from here. This is very much so a work-in-progress, and it might change. This is not a stable, production-ready product yet, as ideas are being experimented with and improved upon. This project does not make any promises regarding security or stability of data access. You'll need to rely on applying security measures (auth, roles, etc) to the data access in API controllers and database operations as you normally would elsewhere. 
+  If you plan on using this as an out-of-the-box solution, I'd highly recommend forking the project instead of cloning it directly from here. This is very much so a work-in-progress, and it will likely change. This is not a stable, production-ready product yet, as ideas are being experimented with and improved upon. This project does not make any promises regarding security or stability of data access. You'll need to rely on applying security measures (auth, roles, etc) to the data access in API controllers and database operations as you normally would elsewhere. 
   
   This can become a stable production-ready product with the help of community contributions. If this seems like something you or your company could benefit from, feel free to get involved!
