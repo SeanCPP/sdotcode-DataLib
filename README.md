@@ -119,7 +119,7 @@ builder.Services.AddCors(options =>
         name: MyAllowSpecificOrigins,
         policy =>
         {
-            policy.WithOrigins("https://localhost:7220");
+            policy.WithOrigins("https://localhost:7220"); // Front-end application that makes requests to this API
         });
 });
 
