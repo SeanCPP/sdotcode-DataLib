@@ -101,14 +101,14 @@ builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https:/
 
 builder.Services.AddWebApiRepository<PersonModel, PersonService>();
 // The above line is a shortcut for:
-// builder.Services.AddScoped<IDataStore<IPersonModel>, HttpClientDataStore<IPersonModel>>();
-// builder.Services.AddScoped<Service<IPersonModel>, PersonService>();
+// builder.Services.AddScoped<IDataStore<PersonModel>, HttpClientDataStore<PersonModel>>();
+// builder.Services.AddScoped<Service<PersonModel>, PersonService>();
 ```
 
 ### The API Project's Program.cs
 ```csharp
-builder.Services.AddSingleton<IDataStore<IPersonModel>, InMemoryDataStore<IPersonModel>>();
-builder.Services.AddSingleton<Service<IPersonModel>, PersonServiceMock>();
+builder.Services.AddSingleton<IDataStore<PersonModel>, InMemoryDataStore<PersonModel>>();
+builder.Services.AddSingleton<Service<PersonModel>, PersonServiceMock>();
   
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 builder.Services.AddCors(options =>
