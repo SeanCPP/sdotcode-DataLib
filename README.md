@@ -3,25 +3,25 @@ A database-agnostic Symmetrical Repository Pattern implementation that allows yo
 
 ## The Symmetrical Repository pattern
 
-When the entire tech stack of a product is written in one unified **.net**, we can start layering some traditional design patterns outwards, across parts of the stack.
-Reusing .net code doesn't need to stop at sharing models in a shared project. Since *Dependency Injection* is so first-class in .net, the repository pattern has
-proven its worth in production full-stack .net applications, and lends to being a fantastic developer experience.
-
+  Since certain tasks (in regard to data acess) have become so trivialized by the abstractions brought into the .net ecosystem, we can start *DRY*ing our code across the tech stack pretty seamlessly. The repository pattern can be mirrored between the back-end and the front-end, which provides you a seamless approach to dealing with boring CRUD operations across layers of the tech stack.
+  
 ![ex1](https://user-images.githubusercontent.com/4634215/167278164-cf47c839-4cf8-44a2-be20-87fbea3cee7a.png)
 
-  Since certain tasks (in regard to data acess) have become so trivialized by the abstractions brought into the .net ecosystem, we can start *DRY*ing our code across the tech stack pretty seamlessly. The repository pattern can be mirrored between the back-end and the front-end, which provides you a seamless approach to dealing with boring CRUD operations across layers of the tech stack.
+# Using this as your **_solution-wide_** repository layer
 
-## Model class
+### Model class
 ```csharp
 [TableName("People")]
 public class IPersonModel : IStoredItem
 {
     public virtual int Id { get; set; }
+    
+    [Searchable]
     public virtual string? Name { get; set; } = string.Empty;
 }
 ```
 
-## Service class
+### Service class
 ```csharp
 public class PersonService : Service<IPersonModel>
 {
@@ -43,23 +43,60 @@ public class PeopleController : ExtendedControllerBase<IPersonModel>
 }
 ```
 
-That's all you need for a basic CRUD service abstraction you can **Inject** into your API controller, Blazor component, etc
+With these classes set up and registered in the DI container, you could now utilize Service<PersonModel> in any project in the solution and perform CRUD and Search operations in an API controller, Blazor component, Xamarin/MAUI app, etc.
+
+### Blazor component
+```csharp
+@foreach(var person in people)
+{
+    <p>@person.Id - @person.Name</p>
+}
+
+<input type="text" @bind-value=nameSearch />
+<button @onclick=Search>Search</button>
+
+@code {
+    [Inject] Service<PersonModel>? service { get; set; }
+
+    private string nameSearch = string.Empty;
+
+    IEnumerable<PersonModel> people = new List<PersonModel>();
+
+    private async Task Search()
+    {
+        people = await service!.SearchAsync(nameSearch, 
+            pagingOptions: default,
+            x => x.Name, 
+            x => x.Id); // This won't get searched since the Id property on PersonModel doesn't have [Searchable]
+    }
+}
+```
 
 ## The IDataStore interface
-In order to make this work, we need to plug an IDataStore implemenation into the **DI** containers. So far, there are two (2) built-in IDataStore implementations (more are coming):
+In order to make this work, we need to plug an IDataStore implemenation into the DI containers of each application. So far, there are two (2) built-in IDataStore implementations (more are coming):
 **InMemoryDataStore** and **HttpClientDataStore**
 
-The **InMemoryDataStore** is essentially just an adapter for a List<T> which allows for easy mocking abstractions
+The **InMemoryDataStore** is an in-memory data store that can be used for mocking / testing.
 
  The **HttpClientDataStore** is more interesting. 
  
 ## The HttpClientDataStore
     
-By subclassing the ExtendedControllerBase, we get a fully-featured CRUD API for that model class generated automatically.
+By subclassing the ExtendedControllerBase in your code, you get a fully-featured CRUD+Search API for that model class generated automatically.
     
-When HttpClientDataStore is registered as the IDataStore in your front-end app (Blazor, winforms, console app, etc)
-It will make HTTP requests to the appropriate endpoints to handle the data.
-    
+When using the Service class with HttpClientDataStore registered as the IDataStore, the Service will make HTTP requests to the appropriate controller methods behind the scenes. 
+
+If you need to add role authorization to any controller method, you can always override the method in your controller and add the [Authorize] attribute:
+```csharp
+[Authorize]
+public override Task<ActionResult> Upsert([FromBody] IEnumerable<PersonModel> items)
+{
+    return base.Upsert(items);
+} 
+```
+
+## Wiring up the DI
+  
 ### The Blazor project's Program.cs
 ```csharp
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:7051/") });
@@ -93,25 +130,3 @@ app.UseCors(MyAllowSpecificOrigins);
 ```
     
  And under the hood, the HttpClientDataStore will send requests to the API, which is using its own symmetrical Service repository.
-    
- 
-Getting data is as simple as:
-    
-### Blazor component
-```csharp
-@foreach(var person in people)
-{
-    <p>@person.Id - @person.Name</p>
-}
-
-@code {
-    [Inject] Service<IPersonModel>? service { get; set; }
-
-    IEnumerable<IPersonModel> people = new List<IPersonModel>();
-
-    protected override async Task OnInitializedAsync()
-    {
-        people = await service!.GetAsync();
-    }
-}
-```
