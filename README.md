@@ -123,3 +123,21 @@ var app = builder.Build();
 // Later on...
 app.UseCors(MyAllowSpecificOrigins);
 ```
+  
+## Additional notes
+  A side effect to the way this is designed is that debugging your data access layer while developing actually becomes much simpler.
+  If you override the ```OnException(Exception ex)``` method in your Service classes, you will automatically hit the stop _if a data access error occurs in any **application** in your solution during runtime._ This is equivilent to setting a breakpoint in every ```catch(){ }``` statement in your repository. 
+  
+  Furthermore, if you set a breakpoint inside the HandleException method of an ```IDataStore```, you'll hit a stop _if a data access error occurs in any **application** for **every single Entity** in your solution during runtime._ (as long as it's using that ```IDataStore```) which is, in my opinion, pretty cool.
+  
+  ```csharp
+public class PersonService : Service<PersonModel>
+{
+    public PersonService(IDataStore<PersonModel> dataStore) : base(dataStore) { }
+
+    protected override Task OnException(Exception ex)
+    {
+        return base.OnException(ex);
+    }
+}
+```
