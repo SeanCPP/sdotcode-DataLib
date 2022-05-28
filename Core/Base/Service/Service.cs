@@ -32,7 +32,7 @@ public abstract class Service<T> : ErrorProne where T : IStoredItem, new()
         => DataStore.GetAsync(propertyName, value, paging);
 
     /// <summary>
-    /// On Get Multiple. Don't invoke this method directly, the system will invoke it. (Use Get instead)
+    /// On Search. Don't invoke this method directly, the system will invoke it. (Use Get instead)
     /// </summary>
     /// <returns></returns>
     protected virtual Task<IEnumerable<T>> OnSearch(Dictionary<string, string> searchQueries, PagingInfo? paging = null)
@@ -45,7 +45,7 @@ public abstract class Service<T> : ErrorProne where T : IStoredItem, new()
     protected virtual Task<T> OnAddOrUpdate(T entity) => DataStore.AddOrUpdateAsync(entity);
 
     /// <summary>
-    /// On Update Single. Don't invoke this method directly, the system will invoke it. (Use Update instead)
+    /// On Update Multiple. Don't invoke this method directly, the system will invoke it. (Use Update instead)
     /// </summary>
     /// <returns></returns>
     protected virtual Task<IEnumerable<T>> OnAddOrUpdate(IEnumerable<T> items) => DataStore.AddOrUpdateAsync(items);
@@ -212,8 +212,7 @@ public abstract class Service<T> : ErrorProne where T : IStoredItem, new()
 
     public Task<T> AddOrUpdateAsync(T entity) => Try(() => OnAddOrUpdate(entity));
     
-    public Task<IEnumerable<T>> AddOrUpdateAsync(IEnumerable<T> items)
-        => Try<IEnumerable<T>, List<T>>(() => OnAddOrUpdate(items));
+    public Task<IEnumerable<T>> AddOrUpdateAsync(IEnumerable<T> items) => Try<IEnumerable<T>, List<T>>(() => OnAddOrUpdate(items));
     
     public Task<bool> DeleteAsync(int id) => Try(() => OnDelete(id));
 
