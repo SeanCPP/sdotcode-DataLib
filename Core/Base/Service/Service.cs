@@ -35,8 +35,8 @@ public abstract class Service<T> : ErrorProne where T : IStoredItem, new()
     /// On Get Multiple. Don't invoke this method directly, the system will invoke it. (Use Get instead)
     /// </summary>
     /// <returns></returns>
-    protected virtual Task<IEnumerable<T>> OnSearch(string query, PagingInfo paging, params string[] propertiesToSearch) 
-        => DataStore.SearchAsync(query, paging, propertiesToSearch);
+    protected virtual Task<IEnumerable<T>> OnSearch(Dictionary<string, string> searchQueries, PagingInfo? paging = null)
+        => DataStore.SearchAsync(searchQueries, paging);
 
     /// <summary>
     /// On Update Single. Don't invoke this method directly, the system will invoke it. (Use Update instead)
@@ -102,7 +102,7 @@ public abstract class Service<T> : ErrorProne where T : IStoredItem, new()
     {
         return Try<IEnumerable<T>, List<T>>(() => 
         {
-            var actualSearchParams = new List<string>();
+            var actualSearchParams = new Dictionary<string, string>();
             foreach (var property in propertiesToSearch)
             {
                 var prop = typeof(T).GetProperty(property);
@@ -114,10 +114,10 @@ public abstract class Service<T> : ErrorProne where T : IStoredItem, new()
                 var attribute = prop.GetCustomAttribute(typeof(SearchableAttribute), inherit: false);
                 if (attribute is not null)
                 {
-                    actualSearchParams.Add(property);
+                    actualSearchParams[property] = query;
                 }
             }
-            return OnSearch(query, pagingOptions ?? new(), actualSearchParams.ToArray());
+            return OnSearch(actualSearchParams, pagingOptions ?? new());
         });
     }
 
@@ -145,6 +145,68 @@ public abstract class Service<T> : ErrorProne where T : IStoredItem, new()
                 propertyStrings.Add(body!.Member.Name);
             }
             return SearchAsync(query, pagingOptions ?? new(), propertyStrings.ToArray());
+        });
+    }
+    public Task<IEnumerable<T>> SearchAsync(Dictionary<string, string> propertySearches, PagingInfo? pagingOptions = null)
+    {
+        return Try<IEnumerable<T>, List<T>>(() =>
+        {
+            var filteredSearches = new Dictionary<string, string>();
+
+            if(propertySearches is null)
+            {
+                return OnGet(pagingOptions!);
+            }
+
+            foreach (var property in propertySearches.Keys)
+            {
+                var prop = typeof(T).GetProperty(property);
+                if (prop is null)
+                {
+                    continue;
+                }
+                var attribute = prop.GetCustomAttribute(typeof(SearchableAttribute), inherit: false);
+                if (attribute is  null)
+                {
+                    continue;
+                }
+
+                filteredSearches[property] = propertySearches[property];
+            }
+            return OnSearch(filteredSearches, pagingOptions ?? new());
+        });
+    }
+
+    public Task<IEnumerable<T>> SearchAsync<SearchType>(SearchType searchModel, PagingInfo? pagingOptions = null)
+        where SearchType : new()
+    {
+        return Try<IEnumerable<T>, List<T>>(() =>
+        {
+            var searchType = typeof(SearchType);
+            var entityType = typeof(T);
+            var propertyStrings = new Dictionary<string, string>();
+
+            var searchProperties = searchType.GetProperties();
+            var properties = entityType.GetProperties();
+
+            foreach (var property in searchProperties)
+            {
+                var propertyToSearch = properties
+                    .FirstOrDefault(p => p.Name == property.Name 
+                        && p.PropertyType == property.PropertyType);
+                if(propertyToSearch is null)
+                {
+                    continue;
+                }
+
+                var value = property.GetValue(searchModel)?.ToString() ?? string.Empty;
+                if (value is not null)
+                {
+                    propertyStrings[property.Name] = value;
+                }
+                
+            }
+            return SearchAsync(propertyStrings, pagingOptions ?? new());
         });
     }
 

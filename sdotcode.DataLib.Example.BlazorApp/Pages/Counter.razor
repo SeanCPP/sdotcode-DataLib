@@ -10,7 +10,6 @@
 <input type="text" @bind-value=nameSearch />
 <button @onclick=Search>Search</button>
 
-
 @code {
     [Inject] Service<PersonModel>? service { get; set; }
 
@@ -20,6 +19,8 @@
 
     private async Task Search()
     {
+        //people = await service!.SearchAsync(new SearchPersonModel { Name = nameSearch }, default!);
+        
         people = await service!.SearchAsync(nameSearch, 
             pagingOptions: default,
             x => x.Name, 

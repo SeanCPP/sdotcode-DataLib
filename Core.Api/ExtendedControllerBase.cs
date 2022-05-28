@@ -31,15 +31,13 @@ namespace sdotcode.DataLib.Core.Api
 
         [HttpGet]
         [Route("Search")]
-        public virtual async Task<ActionResult> Search([FromQuery] string[] searchProperties,
-            [FromQuery] string query,
-            [FromQuery] int page = 0,
-            [FromQuery] int pageSize = Defaults.PageSize)
+        public virtual async Task<ActionResult> Search(int page = 0, int pageSize = 10, [FromQuery] Dictionary<string, string> searchParams = null!)
         {
-            return Ok(await Service.SearchAsync(
-                query,
-                new PagingInfo { Page = page, PageSize = pageSize },
-                searchProperties));
+            if(searchParams is null)
+            {
+                return await Get(page, pageSize);
+            }
+            return Ok(await Service.SearchAsync(searchParams, new PagingInfo { Page = page, PageSize = pageSize }));
         }
 
         [HttpDelete]
@@ -59,7 +57,7 @@ namespace sdotcode.DataLib.Core.Api
         [HttpPut]
         public virtual async Task<ActionResult> Upsert([FromBody] IEnumerable<T> items)
         {
-            if (items == null || !items.Any())
+            if (items is null || !items.Any())
             {
                 return BadRequest("Invalid item passed");
             }

@@ -11,7 +11,7 @@ public interface IDataStore<T>
     Task<T> GetAsync(int id);
     Task<IEnumerable<T>> GetAsync(PagingInfo? paging = null);
     Task<IEnumerable<T>> GetAsync(string propertyName, object value, PagingInfo? paging = null);
-    Task<IEnumerable<T>> SearchAsync(string query, PagingInfo? paging = null, params string [] propertiesToSearch);
+    Task<IEnumerable<T>> SearchAsync(Dictionary<string, string> searchQueries, PagingInfo? paging = null);
     Task<bool> DeleteAsync(int id);
     Task<T> AddOrUpdateAsync(T item);
     Task<IEnumerable<T>> AddOrUpdateAsync(IEnumerable<T> items);

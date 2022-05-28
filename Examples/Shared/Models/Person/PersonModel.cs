@@ -7,6 +7,11 @@ using System.Threading.Tasks;
 
 namespace sdotcode.DataLib.Examples;
 
+public class SearchPersonModel
+{
+    public string? Name { get; set; }
+}
+
 [TableName("People")]
 public class PersonModel : IStoredItem
 {

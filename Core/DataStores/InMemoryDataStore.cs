@@ -16,7 +16,7 @@ public class InMemoryDataStore<T> : DataStore<T>, IDataStore<T> where T : IStore
         paging ??= new();
 
         var results = db
-            .Where(item => ComparePropertyValue(item, propertyName, value))
+            .Where(item => ReflectionHelpers.ComparePropertyValue<T>(item, propertyName, value))
             .Skip(paging.Page * paging.PageSize)
             .Take(paging.PageSize);
         return Task.FromResult(results)!;
@@ -87,26 +87,48 @@ public class InMemoryDataStore<T> : DataStore<T>, IDataStore<T> where T : IStore
             .Skip(paging.Page * paging.PageSize)
             .Take(paging.PageSize));
     }
-    public Task<IEnumerable<T>> SearchAsync(string query, PagingInfo? paging = null, params string[] propertiesToSearch)
-    {
-        paging ??= new();
-        var items = new List<T>();
-        foreach (var propertyName in propertiesToSearch)
-        {
-            var selection = db.Where(item =>
-                GetPropertyValue(item, propertyName)
-                .ToString()?
-                .ToLower()
-                .Contains(query.ToLower()) ?? false)
-                .Skip(paging.Page * paging.PageSize)
-                .Take(paging.PageSize);
 
-            if (selection.Any())
+    public Task<IEnumerable<T>> SearchAsync(Dictionary<string, string> searchQueries, PagingInfo? paging = null)
+    {
+        var entityProperties = typeof(T).GetProperties();
+        var propertyCache = new Dictionary<string, PropertyInfo>();
+        var result = db.Where(item =>
+        {
+            bool match = true;
+            foreach (var searchPropertyName in searchQueries.Keys)
             {
-                items.AddRange(selection);
+                var entityProperty = null as PropertyInfo;
+                if (propertyCache.ContainsKey(searchPropertyName))
+                {
+                    entityProperty = propertyCache[searchPropertyName];
+                }
+                else
+                {
+                    entityProperty = entityProperties.FirstOrDefault(prop => prop.Name == searchPropertyName);
+
+                    if (entityProperty is not null)
+                    {
+                        propertyCache[searchPropertyName] = entityProperty;
+                    }
+                }
+                var entityPropertyValue = ReflectionHelpers.GetPropertyValue<T>(item, entityProperty!.Name)
+                              .ToString()?
+                              .ToLower()
+                              ?? string.Empty;
+                var searchPropertyValue = searchQueries[searchPropertyName];
+                if (!entityPropertyValue.Contains(searchPropertyValue.ToLower()))
+                {
+                    match = false;
+                }
             }
-        }
-        return Task.FromResult<IEnumerable<T>>(items);
+            return match;
+        });
+       
+        return Task.FromResult(
+            result
+                .Skip(paging!.Page * paging.PageSize)
+                .Take(paging!.PageSize) 
+            ?? new List<T>());
     }
 
     public Task HandleException(Exception ex)
