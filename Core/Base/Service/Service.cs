@@ -12,6 +12,8 @@ public abstract class Service<T> : ErrorProne where T : IStoredItem, new()
         DataStore = dataStore;
     }
 
+    #region Extension API
+
     /// <summary>
     /// On Get Single. Don't invoke this method directly, the system will invoke it. (Use Get(int) instead)
     /// </summary>
@@ -28,7 +30,7 @@ public abstract class Service<T> : ErrorProne where T : IStoredItem, new()
     /// On Get Multiple. Don't invoke this method directly, the system will invoke it. (Use Get instead)
     /// </summary>
     /// <returns></returns>
-    protected virtual Task<IEnumerable<T>> OnGet(string propertyName, object value, PagingInfo paging) 
+    protected virtual Task<IEnumerable<T>> OnGet(string propertyName, object value, PagingInfo paging)
         => DataStore.GetAsync(propertyName, value, paging);
 
     /// <summary>
@@ -58,14 +60,13 @@ public abstract class Service<T> : ErrorProne where T : IStoredItem, new()
     protected virtual Task<bool> OnDelete(int id) => DataStore.DeleteAsync(id);
 
     /// <summary>
-    /// On Exception Occured in any of the "On" methods. If you override this method, it's generally a good idea to "return base.OnException(ex)" to allow the
-    /// IDataSource implementation to handle its errors.
-    /// Don't invoke this method directly, the system will invoke it.
+    /// Invoked when an Exception occurs within an operation. If you override this method, it will still invoke the IDataSource implementation's
+    /// HandleException. Don't invoke this method directly, the system will invoke it.
     /// </summary>
     /// <returns></returns>
-    protected virtual Task OnException(Exception ex) => DataStore.HandleException(ex);
+    protected virtual Task OnException(Exception ex) { return Task.CompletedTask; }
 
-    protected sealed override Task HandleException(Exception ex) => OnException(ex);
+    #endregion
 
     #region Public API
 
@@ -215,6 +216,17 @@ public abstract class Service<T> : ErrorProne where T : IStoredItem, new()
     public Task<IEnumerable<T>> AddOrUpdateAsync(IEnumerable<T> items) => Try<IEnumerable<T>, List<T>>(() => OnAddOrUpdate(items));
     
     public Task<bool> DeleteAsync(int id) => Try(() => OnDelete(id));
+
+    #endregion
+
+    #region Private Methods
+
+    // This will be invoked when an error is thrown inside a call to Try()
+    protected sealed override Task HandleException(Exception ex)
+    {
+        DataStore.HandleException(ex);
+        return OnException(ex);
+    }
 
     #endregion
 }
