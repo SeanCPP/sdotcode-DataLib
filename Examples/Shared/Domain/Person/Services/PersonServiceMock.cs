@@ -8,7 +8,7 @@ public class PersonServiceMock : Service<PersonModel>
     public PersonServiceMock() 
         : base(new InMemoryDataStore<PersonModel>())
     {
-        AddOrUpdateAsync(new List<PersonModel>()
+        UpsertAsync(new List<PersonModel>()
         {
             new PersonModel { Id = 1, Name = "Curly", Email = "TestMail1@email.com" },
             new PersonModel { Id = 2, Name = "Larry", Email = "Mail2Test@email.com" },

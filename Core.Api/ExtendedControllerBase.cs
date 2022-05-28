@@ -61,7 +61,7 @@ namespace sdotcode.DataLib.Core.Api
             {
                 return BadRequest("Invalid item passed");
             }
-            return Ok(await Service.AddOrUpdateAsync(items));
+            return Ok(await Service.UpsertAsync(items));
         }
     }
 }

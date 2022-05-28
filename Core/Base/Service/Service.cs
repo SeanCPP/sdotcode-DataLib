@@ -44,13 +44,13 @@ public abstract class Service<T> : ErrorProne where T : IStoredItem, new()
     /// On Update Single. Don't invoke this method directly, the system will invoke it. (Use Update instead)
     /// </summary>
     /// <returns></returns>
-    protected virtual Task<T> OnAddOrUpdate(T entity) => DataStore.AddOrUpdateAsync(entity);
+    protected virtual Task<T> OnUpsert(T entity) => DataStore.AddOrUpdateAsync(entity);
 
     /// <summary>
     /// On Update Multiple. Don't invoke this method directly, the system will invoke it. (Use Update instead)
     /// </summary>
     /// <returns></returns>
-    protected virtual Task<IEnumerable<T>> OnAddOrUpdate(IEnumerable<T> items) => DataStore.AddOrUpdateAsync(items);
+    protected virtual Task<IEnumerable<T>> OnUpsert(IEnumerable<T> items) => DataStore.AddOrUpdateAsync(items);
 
 
     /// <summary>
@@ -208,9 +208,9 @@ public abstract class Service<T> : ErrorProne where T : IStoredItem, new()
         });
     }
 
-    public Task<T> AddOrUpdateAsync(T entity) => Try(() => OnAddOrUpdate(entity));
+    public Task<T> UpsertAsync(T entity) => Try(() => OnUpsert(entity));
     
-    public Task<IEnumerable<T>> AddOrUpdateAsync(IEnumerable<T> items) => Try<IEnumerable<T>, List<T>>(() => OnAddOrUpdate(items));
+    public Task<IEnumerable<T>> UpsertAsync(IEnumerable<T> items) => Try<IEnumerable<T>, List<T>>(() => OnUpsert(items));
     
     public Task<bool> DeleteAsync(int id) => Try(() => OnDelete(id));
 
