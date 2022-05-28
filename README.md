@@ -1,7 +1,6 @@
 # sdotcode-DataLib
-A database-agnostic Symmetrical Repository Pattern implementation that allows you to create DI-friendly CRUD respositories/services for model items
-
-## The Symmetrical Repository pattern
+A database-agnostic, *write-once, run everywhere* repository pattern implementation for an entire dotnet ```.solution```.
+This isn't intended to replace any ORM or database libraries. This is a symmetrical repository pattern that allows you to handle data access in *every* dotnet application in your solution in a consistent, elegant way.
 
   Since certain tasks (in regard to data acess) have become so trivialized by the abstractions brought into the .net ecosystem, we can start *DRY*ing our code across the tech stack pretty seamlessly. The repository pattern can be mirrored between the back-end and the front-end, which provides you a seamless approach to dealing with boring CRUD operations across layers of the tech stack.
   
@@ -80,7 +79,7 @@ The **InMemoryDataStore** is an in-memory data store that can be used for mockin
  
 ### The HttpClientDataStore
     
-By subclassing the ExtendedControllerBase in your code, you get a fully-featured CRUD+Search API for that model class generated automatically.
+By subclassing the ExtendedControllerBase in your code, you get a fully-functioning CRUD+Search API for that model class generated automatically.
     
 When using the Service class with HttpClientDataStore registered as the IDataStore, the Service will make HTTP requests to the appropriate controller methods behind the scenes. 
 
@@ -122,4 +121,22 @@ var app = builder.Build();
 
 // Later on...
 app.UseCors(MyAllowSpecificOrigins);
+```
+  
+## Additional notes
+  A side effect to the way this is designed is that debugging your data access layer while developing actually becomes much simpler.
+  If you override the ```OnException(Exception ex)``` method in your Service class and leave a breakpoint inside it, you will automatically hit the stop _if a data access error occurs in any **application** in your solution during runtime._ This is equivilent to setting a breakpoint in every ```catch(){ }``` statement in your Entity's repository. 
+  
+  Furthermore, if you set a breakpoint inside the HandleException method of an ```IDataStore```, you'll hit a stop _if a data access error occurs in any **application** for **every single Entity** in your solution during runtime._ (as long as it's using that ```IDataStore```) which is, a lot of power for one breakpoint. And is in my opinion, overall pretty cool.
+  
+  ```csharp
+public class PersonService : Service<PersonModel>
+{
+    public PersonService(IDataStore<PersonModel> dataStore) : base(dataStore) { }
+
+    protected override Task OnException(Exception ex)
+    {
+        return base.OnException(ex);
+    }
+}
 ```
