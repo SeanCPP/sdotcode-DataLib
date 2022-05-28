@@ -15,7 +15,7 @@ namespace sdotcode.DataLib.Core.Api
 
         [HttpGet]
         [Route("Find/{propertyName}/{value}")]
-        public virtual async Task<ActionResult> Get([FromRoute] string propertyName,
+        public virtual async Task<ActionResult> Find([FromRoute] string propertyName,
             [FromRoute] string value,
             [FromQuery] int page = 0,
             [FromQuery] int pageSize = Defaults.PageSize)
