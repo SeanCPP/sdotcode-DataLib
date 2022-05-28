@@ -100,7 +100,7 @@ It's important to note that in order for the system to automatically wire up and
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:7051/") }); // URL to the API project
 
 builder.Services.AddWebApiRepository<PersonModel, PersonService>();
-// Which is a shortcut for:
+// The above line is a shortcut for:
 // builder.Services.AddScoped<IDataStore<IPersonModel>, HttpClientDataStore<IPersonModel>>();
 // builder.Services.AddScoped<Service<IPersonModel>, PersonService>();
 ```
