@@ -79,7 +79,7 @@ The **InMemoryDataStore** is an in-memory data store that can be used for mockin
  
 ### The HttpClientDataStore
     
-By subclassing the ExtendedControllerBase in your code, you get a CRUD+Search API for that model class generated automatically.
+By subclassing the ExtendedControllerBase in your code, you get a fully-functioning CRUD+Search API for that model class generated automatically.
     
 When using the Service class with HttpClientDataStore registered as the IDataStore, the Service will make HTTP requests to the appropriate controller methods behind the scenes. 
 
