@@ -127,5 +127,3 @@ var app = builder.Build();
 // Later on...
 app.UseCors(MyAllowSpecificOrigins);
 ```
-    
- And under the hood, the HttpClientDataStore will send requests to the API, which is using its own symmetrical Service repository.
