@@ -1,6 +1,6 @@
 # sdotcode-DataLib
 A database-agnostic, *write-once, run everywhere* repository pattern implementation for an entire dotnet ```.solution```.
-This isn't intended to replace any ORM or database libraries. This is a symmetrical repository pattern that allows you to handle data access in any type of dotnet application in your solution.
+This isn't intended to replace any ORM or database libraries. This is a symmetrical repository pattern that allows you to handle data access in *every* dotnet application in your solution in a consistent, elegant way.
 
   Since certain tasks (in regard to data acess) have become so trivialized by the abstractions brought into the .net ecosystem, we can start *DRY*ing our code across the tech stack pretty seamlessly. The repository pattern can be mirrored between the back-end and the front-end, which provides you a seamless approach to dealing with boring CRUD operations across layers of the tech stack.
   
