@@ -10,8 +10,6 @@ namespace TestAPI.Controllers
     [Route("[controller]")]
     public class PeopleController : ExtendedControllerBase<PersonModel>
     {
-        public PeopleController(Service<PersonModel> service) : base(service)
-        {
-        }
+        public PeopleController(Service<PersonModel> service) : base(service) { }
     }
 }

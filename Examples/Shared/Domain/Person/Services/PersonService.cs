@@ -7,7 +7,5 @@ namespace sdotcode.DataLib.Examples;
 /// </summary>
 public class PersonService : Service<PersonModel>
 {
-    public PersonService(IDataStore<PersonModel> dataStore) : base(dataStore)
-    {
-    }
+    public PersonService(IDataStore<PersonModel> dataStore) : base(dataStore) { }
 }
