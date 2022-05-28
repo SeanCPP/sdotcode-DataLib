@@ -14,4 +14,7 @@ public class PersonModel : IStoredItem
 
     [Searchable]
     public virtual string Name { get; set; } = string.Empty;
+
+    [Searchable]
+    public virtual string Email { get; set; } = string.Empty;
 }
