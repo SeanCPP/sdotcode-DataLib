@@ -6,7 +6,7 @@ This isn't intended to replace any ORM or database libraries. This is a symmetri
   
 ![Mirrored Repository Pattern](/diagramv2.png?raw=true "Diagram demonstrating the architecture of this project")
 
-# Using this as your **_solution-wide_** repository layer
+# Using this as a **_solution-wide_** repository layer
 
 ### Model class
 ```csharp
