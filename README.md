@@ -31,7 +31,7 @@ public class PersonService : Service<IPersonModel>
 }
 ```
 
- ### The PeopleController class
+ ### The PeopleController class (if using the API features)
  ```csharp
 [ApiController]
 [Route("[controller]")]
