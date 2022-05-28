@@ -10,6 +10,12 @@ namespace sdotcode.DataLib.Core.DataStores;
 public class InMemoryDataStore<T> : DataStore<T>, IDataStore<T> where T : IStoredItem, new()
 {
     private readonly List<T> db = new();
+    private readonly PropertyInfo[] entityProperties;
+
+    public InMemoryDataStore()
+    {
+        entityProperties = typeof(T).GetProperties();
+    }
 
     public Task<IEnumerable<T>> GetAsync(string propertyName, object value, PagingInfo? paging = null)
     {
@@ -82,6 +88,7 @@ public class InMemoryDataStore<T> : DataStore<T>, IDataStore<T> where T : IStore
     public Task<IEnumerable<T>> GetAsync(PagingInfo? paging = null)
     {
         paging ??= new();
+
         return Task.FromResult(
             db
             .Skip(paging.Page * paging.PageSize)
@@ -90,32 +97,22 @@ public class InMemoryDataStore<T> : DataStore<T>, IDataStore<T> where T : IStore
 
     public Task<IEnumerable<T>> SearchAsync(Dictionary<string, string> searchQueries, PagingInfo? paging = null)
     {
-        var entityProperties = typeof(T).GetProperties();
-        var propertyCache = new Dictionary<string, PropertyInfo>();
+        paging ??= new(); 
+
         var result = db.Where(item =>
         {
             bool match = true;
             foreach (var searchPropertyName in searchQueries.Keys)
             {
-                var entityProperty = null as PropertyInfo;
-                if (propertyCache.ContainsKey(searchPropertyName))
-                {
-                    entityProperty = propertyCache[searchPropertyName];
-                }
-                else
-                {
-                    entityProperty = entityProperties.FirstOrDefault(prop => prop.Name == searchPropertyName);
+                var entityProperty = entityProperties.FirstOrDefault(prop => prop.Name == searchPropertyName);
 
-                    if (entityProperty is not null)
-                    {
-                        propertyCache[searchPropertyName] = entityProperty;
-                    }
-                }
                 var entityPropertyValue = ReflectionHelpers.GetPropertyValue<T>(item, entityProperty!.Name)
                               .ToString()?
                               .ToLower()
                               ?? string.Empty;
+
                 var searchPropertyValue = searchQueries[searchPropertyName];
+
                 if (!entityPropertyValue.Contains(searchPropertyValue.ToLower()))
                 {
                     match = false;
@@ -126,8 +123,8 @@ public class InMemoryDataStore<T> : DataStore<T>, IDataStore<T> where T : IStore
        
         return Task.FromResult(
             result
-                .Skip(paging!.Page * paging.PageSize)
-                .Take(paging!.PageSize) 
+                .Skip(paging.Page * paging.PageSize)
+                .Take(paging.PageSize) 
             ?? new List<T>());
     }
 
