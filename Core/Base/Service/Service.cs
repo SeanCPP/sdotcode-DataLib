@@ -169,7 +169,7 @@ public abstract class Service<T> : ErrorProne where T : IStoredItem, new()
                     continue;
                 }
 
-                filteredSearches[property] = propertySearches[property];
+                filteredSearches[property] = propertySearches[property] ?? string.Empty;
             }
             return OnSearch(filteredSearches, pagingOptions ?? new());
         });
