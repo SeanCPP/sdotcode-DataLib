@@ -4,7 +4,7 @@ This isn't intended to replace any ORM or database libraries. This is a symmetri
 
   Since certain tasks (in regard to data acess) have become so trivialized by the abstractions brought into the .net ecosystem, we can start *DRY*ing our code across the tech stack pretty seamlessly. The repository pattern can be mirrored between the back-end and the front-end, which provides you a seamless approach to dealing with boring CRUD operations across layers of the tech stack.
   
-![ex1](https://user-images.githubusercontent.com/4634215/167278164-cf47c839-4cf8-44a2-be20-87fbea3cee7a.png)
+![Mirrored Repository Pattern](/diagramv2.png?raw=true "Diagram demonstrating the architecture of this project")
 
 # Using this as your **_solution-wide_** repository layer
 
