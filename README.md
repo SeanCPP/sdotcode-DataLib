@@ -9,11 +9,6 @@ proven its worth in production full-stack .net applications, and lends to being 
 
 ![ex1](https://user-images.githubusercontent.com/4634215/167278164-cf47c839-4cf8-44a2-be20-87fbea3cee7a.png)
 
-
-I first saw this kind of idea in *Xamarin.Forms*, where platform-dependent classes could be injected across projects. The Shared XAML UI project could ask the DI container for a resource, and in the *Android* and *iOS* project you would register the platform-specific resource.
-
-In fact, over the past few production .net full-stack applications I've worked on, I have really *honed in* on this new pattern that was looking me straight in the eye the whole time. I'm calling it the Symmetrical Repository pattern, becuase it's really just a way to apply the Repository pattern across imaginary boundaries. 
-  
   Since certain tasks (in regard to data acess) have become so trivialized by the abstractions brought into the .net ecosystem, we can start *DRY*ing our code across the tech stack pretty seamlessly. The repository pattern can be mirrored between the back-end and the front-end, which provides you a seamless approach to dealing with boring CRUD operations across layers of the tech stack.
 
 ## Model class
@@ -36,32 +31,6 @@ public class PersonService : Service<IPersonModel>
 }
 ```
 
-That's all you need for a basic CRUD service abstraction you can **Inject** into your API controller, Blazor component, etc
-
-## The IDataStore interface
-In order to make this work, we need to plug an IDataStore implemenation into the **DI** containers. So far, there are two (2) built-in IDataStore implementations (more are coming):
-**InMemoryDataStore** and **HttpClientDataStore**
-
-The first one is essentially just an adapter for a List<T> which allows for easy mocking abstractions
-   
-## The Mock class
-```csharp
-public PersonServiceMock() 
-    : base(new InMemoryDataStore<IPersonModel>())
-{
-    AddOrUpdateAsync(new List<IPersonModel>()
-    {
-        new PersonModel { Id = 1, Name = "Curly" },
-        new PersonModel { Id = 2, Name = "Larry" },
-        new PersonModel { Id = 3, Name = "Moe" },
-    });
-```
-
- The second IDataStore is more interesting. 
- ## The HttpClientDataStore
- 
- To make this pattern truly symmetrical when doing HTTP requests to an API, we ensure our controllers follow a REST convention.
- 
  ### The PeopleController class
  ```csharp
 [ApiController]
@@ -73,8 +42,20 @@ public class PeopleController : ExtendedControllerBase<IPersonModel>
     }
 }
 ```
+
+That's all you need for a basic CRUD service abstraction you can **Inject** into your API controller, Blazor component, etc
+
+## The IDataStore interface
+In order to make this work, we need to plug an IDataStore implemenation into the **DI** containers. So far, there are two (2) built-in IDataStore implementations (more are coming):
+**InMemoryDataStore** and **HttpClientDataStore**
+
+The **InMemoryDataStore** is essentially just an adapter for a List<T> which allows for easy mocking abstractions
+
+ The **HttpClientDataStore** is more interesting. 
+ 
+## The HttpClientDataStore
     
-By subclassing the ExtendedControllerBase, we get a fully-featured CRUD API for that model class.
+By subclassing the ExtendedControllerBase, we get a fully-featured CRUD API for that model class generated automatically.
     
 When HttpClientDataStore is registered as the IDataStore in your front-end app (Blazor, winforms, console app, etc)
 It will make HTTP requests to the appropriate endpoints to handle the data.
@@ -134,6 +115,3 @@ Getting data is as simple as:
     }
 }
 ```
-    
- ## CONs to this approach:
-Of course, this is all somewhat coupled to the idea of a RESTful/CRUD data layer. Where the Models drive the whole show. If your data needs can't be molded into a **C**reate **R**ead **U**pdate **D**elete type of paradigm, then this abstraction will fall on its face.
