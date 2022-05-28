@@ -25,9 +25,7 @@ public class IPersonModel : IStoredItem
 ```csharp
 public class PersonService : Service<IPersonModel>
 {
-    public PersonService(IDataStore<IPersonModel> dataStore) : base(dataStore)
-    {
-    }
+    public PersonService(IDataStore<IPersonModel> dataStore) : base(dataStore) { }
 }
 ```
 
@@ -37,9 +35,7 @@ public class PersonService : Service<IPersonModel>
 [Route("[controller]")]
 public class PeopleController : ExtendedControllerBase<IPersonModel>
 {
-    public PeopleController(Service<IPersonModel> service) : base(service)
-    {
-    }
+    public PeopleController(Service<IPersonModel> service) : base(service) { }
 }
 ```
 
