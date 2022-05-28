@@ -76,11 +76,13 @@ With these classes set up and registered in the DI container, you could now util
 In order to make this work, we need to plug an IDataStore implemenation into the DI containers of each application. So far, there are two (2) built-in IDataStore implementations (more are coming):
 **InMemoryDataStore** and **HttpClientDataStore**
 
+**Note** If you need an IDataStore for your database/data source, simply implement the IDataStore<T> interface.
+  
 The **InMemoryDataStore** is an in-memory data store that can be used for mocking / testing.
 
  The **HttpClientDataStore** is more interesting. 
  
-## The HttpClientDataStore
+### The HttpClientDataStore
     
 By subclassing the ExtendedControllerBase in your code, you get a fully-featured CRUD+Search API for that model class generated automatically.
     
