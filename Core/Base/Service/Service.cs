@@ -70,13 +70,13 @@ public abstract class Service<T> : ErrorProne where T : IStoredItem, new()
 
     #region Public API
 
-    public Task<T> GetAsync(int id) => Try(async () => await OnGet(id));
+    public Task<T> GetAsync(int id) => Try(() => OnGet(id));
     
     public Task<IEnumerable<T>> GetAsync(PagingInfo? pagingOptions = null) 
-        => Try<IEnumerable<T>, List<T>>(async () => await OnGet(pagingOptions ?? new()));
+        => Try<IEnumerable<T>, List<T>>(() => OnGet(pagingOptions ?? new()));
 
     public Task<IEnumerable<T>> GetAsync(string propertyName, object value, PagingInfo? pagingOptions = null) 
-        => Try<IEnumerable<T>, List<T>>(async () => await OnGet(propertyName, value, pagingOptions ?? new()));
+        => Try<IEnumerable<T>, List<T>>(() => OnGet(propertyName, value, pagingOptions ?? new()));
 
     public Task<IEnumerable<T>> GetAsync(Expression<Func<T, object?>> propertyExpr, object value, PagingInfo? pagingOptions = null)
     {
@@ -119,7 +119,37 @@ public abstract class Service<T> : ErrorProne where T : IStoredItem, new()
             return OnSearch(actualSearchParams, pagingOptions ?? new());
         });
     }
+    
+    public Task<IEnumerable<T>> SearchAsync(Dictionary<string, string> propertySearches, PagingInfo? pagingOptions = null)
+    {
+        return Try<IEnumerable<T>, List<T>>(() =>
+        {
+            var filteredSearches = new Dictionary<string, string>();
 
+            if(propertySearches is null)
+            {
+                return OnGet(pagingOptions!);
+            }
+
+            foreach (var property in propertySearches.Keys)
+            {
+                var prop = typeof(T).GetProperty(property);
+                if (prop is null)
+                {
+                    continue;
+                }
+                var attribute = prop.GetCustomAttribute(typeof(SearchableAttribute), inherit: false);
+                if (attribute is null)
+                {
+                    continue;
+                }
+
+                filteredSearches[property] = propertySearches[property] ?? string.Empty;
+            }
+            return OnSearch(filteredSearches, pagingOptions ?? new());
+        });
+    }
+    
     public Task<IEnumerable<T>> SearchAsync(string query, PagingInfo? pagingOptions = null, params Expression<Func<T, object>>[] propertiesToSearch)
     {
         return Try<IEnumerable<T>, List<T>>(() => 
@@ -142,36 +172,6 @@ public abstract class Service<T> : ErrorProne where T : IStoredItem, new()
                 propertyStrings.Add(body!.Member.Name);
             }
             return SearchAsync(query, pagingOptions ?? new(), propertyStrings.ToArray());
-        });
-    }
-  
-    public Task<IEnumerable<T>> SearchAsync(Dictionary<string, string> propertySearches, PagingInfo? pagingOptions = null)
-    {
-        return Try<IEnumerable<T>, List<T>>(() =>
-        {
-            var filteredSearches = new Dictionary<string, string>();
-
-            if(propertySearches is null)
-            {
-                return OnGet(pagingOptions!);
-            }
-
-            foreach (var property in propertySearches.Keys)
-            {
-                var prop = typeof(T).GetProperty(property);
-                if (prop is null)
-                {
-                    continue;
-                }
-                var attribute = prop.GetCustomAttribute(typeof(SearchableAttribute), inherit: false);
-                if (attribute is  null)
-                {
-                    continue;
-                }
-
-                filteredSearches[property] = propertySearches[property] ?? string.Empty;
-            }
-            return OnSearch(filteredSearches, pagingOptions ?? new());
         });
     }
 
