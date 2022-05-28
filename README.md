@@ -124,12 +124,20 @@ app.UseCors(MyAllowSpecificOrigins);
 ```
   
 ## Additional notes
+  
+  ### Heads up
+  
+  If you plan on using this as an out-of-the-box solution, I'd highly recommend forking the project instead of cloning it directly from here. This is very much so a work-in-progress, and it might change. This is not a stable, production-ready product yet, as ideas are being experimented with and improved upon. This project does not make any claims or promises regarding security, or stability of data access.
+ This can become a stable production-ready product with the help of community contributions. If this seems like something you or your company could benefit from, feel free to get involved!
+  
+  ### Error Handling
+  
   A side effect to the way this is designed is that debugging your data access layer while developing actually becomes much simpler.
   If you override the ```OnException(Exception ex)``` method in your Service class and leave a breakpoint inside it, you will automatically hit the stop _if a data access error occurs in any **application** in your solution during runtime._ This is equivilent to setting a breakpoint in every ```catch(){ }``` statement in your Entity's repository. 
   
   Furthermore, if you set a breakpoint inside the HandleException method of an ```IDataStore```, you'll hit a stop _if a data access error occurs in any **application** for **every single Entity** in your solution during runtime._ (as long as it's using that ```IDataStore```) which is, a lot of power for one breakpoint. And is in my opinion, overall pretty cool.
   
-  ```csharp
+```csharp
 public class PersonService : Service<PersonModel>
 {
     public PersonService(IDataStore<PersonModel> dataStore) : base(dataStore) { }
