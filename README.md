@@ -96,6 +96,8 @@ public override Task<ActionResult> Upsert([FromBody] IEnumerable<PersonModel> it
 
 ## Wiring up the DI
   
+It's important to note that in order for the system to automatically wire up and communicate with the API, the HttpClient must be properly configured to point to the API project, and your API project must allow CORS from your front-end applcation.
+  
 ### The Blazor project's Program.cs
 ```csharp
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:7051/") });
@@ -103,8 +105,6 @@ builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https:/
 builder.Services.AddScoped<IDataStore<IPersonModel>, HttpClientDataStore<IPersonModel>>();
 builder.Services.AddScoped<Service<IPersonModel>, PersonService>();
 ```
-    
- It's important to note that the HttpClient must be properly configured to point to the API project, and your API project must enable CORS from your front-end applcation.
 
 ### The API Project's Program.cs
 ```csharp
