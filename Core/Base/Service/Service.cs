@@ -78,9 +78,7 @@ public abstract class Service<T> : ErrorProne where T : IStoredItem, new()
     public Task<IEnumerable<T>> GetAsync(string propertyName, object value, PagingInfo? pagingOptions = null) 
         => Try<IEnumerable<T>, List<T>>(async () => await OnGet(propertyName, value, pagingOptions ?? new()));
 
-    public Task<IEnumerable<T>> GetAsync(Expression<Func<T, object?>> propertyExpr,
-        object value,
-        PagingInfo? pagingOptions = null)
+    public Task<IEnumerable<T>> GetAsync(Expression<Func<T, object?>> propertyExpr, object value, PagingInfo? pagingOptions = null)
     {
         return Try<IEnumerable<T>, List<T>>(() =>
         {
@@ -122,9 +120,7 @@ public abstract class Service<T> : ErrorProne where T : IStoredItem, new()
         });
     }
 
-    public Task<IEnumerable<T>> SearchAsync(string query, 
-        PagingInfo? pagingOptions = null, 
-        params Expression<Func<T, object>>[] propertiesToSearch)
+    public Task<IEnumerable<T>> SearchAsync(string query, PagingInfo? pagingOptions = null, params Expression<Func<T, object>>[] propertiesToSearch)
     {
         return Try<IEnumerable<T>, List<T>>(() => 
         { 
@@ -148,6 +144,7 @@ public abstract class Service<T> : ErrorProne where T : IStoredItem, new()
             return SearchAsync(query, pagingOptions ?? new(), propertyStrings.ToArray());
         });
     }
+  
     public Task<IEnumerable<T>> SearchAsync(Dictionary<string, string> propertySearches, PagingInfo? pagingOptions = null)
     {
         return Try<IEnumerable<T>, List<T>>(() =>
