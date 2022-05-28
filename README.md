@@ -11,7 +11,7 @@ This isn't intended to replace any ORM or database libraries. This is a symmetri
 ### Model class
 ```csharp
 [TableName("People")]
-public class IPersonModel : IStoredItem
+public class PersonModel : IStoredItem
 {
     public virtual int Id { get; set; }
     
@@ -22,9 +22,9 @@ public class IPersonModel : IStoredItem
 
 ### Service class
 ```csharp
-public class PersonService : Service<IPersonModel>
+public class PersonService : Service<PersonModel>
 {
-    public PersonService(IDataStore<IPersonModel> dataStore) : base(dataStore) { }
+    public PersonService(IDataStore<PersonModel> dataStore) : base(dataStore) { }
 }
 ```
 
