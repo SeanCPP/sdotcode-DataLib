@@ -254,6 +254,7 @@ app.UseCors(MyAllowSpecificOrigins);
   ```
 
   <br/>
+  
   ## Add or Update Multiple
   
   Adds new records if the entities don't exist, otherwise it updates the existing records.
