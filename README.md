@@ -90,6 +90,7 @@ If you need to add role authorization to any controller method, you can always o
 [Authorize]
 public override Task<ActionResult> Upsert([FromBody] IEnumerable<PersonModel> items) => base.Upsert(items);
 ```
+  <br/>
 
 ## Wiring up the DI
   
@@ -126,9 +127,11 @@ var app = builder.Build();
 // Later on...
 app.UseCors(MyAllowSpecificOrigins);
 ```
+  <br/>
 
  # API Reference
- 
+  
+  <br/>
   
   ## Get Single By Id
   
@@ -142,7 +145,7 @@ app.UseCors(MyAllowSpecificOrigins);
   ```csharp 
   var item = await MyService.GetAsync(id);
   ```
-  
+  <br/>
  
   ## Get All (paginated)
   
@@ -157,7 +160,7 @@ app.UseCors(MyAllowSpecificOrigins);
       var items = await GetAsync(); // Get All
       var items = await GetAsync(new PagingInfo { Page = 0, PageSize = 25 }); // Paging options
   ```
-  
+  <br/>
   
   ## Get By [property]
   
@@ -173,6 +176,8 @@ app.UseCors(MyAllowSpecificOrigins);
   ```csharp
       var items = await GetAsync(x => x.Name, "Moe"); // Get Any PersonModel items with the Name "Moe"
   ```
+  
+  <br/>
   
   # Search
   
@@ -193,6 +198,7 @@ app.UseCors(MyAllowSpecificOrigins);
       var items = await SearchAsync("Moe", pagingOptions: default, x => x.Name, x => x.Id); // Searches Name and Id properties for "Moe"
   ```
   
+  <br/>
   
   ## "Multi-textbox" / Form Search
   
@@ -232,6 +238,7 @@ app.UseCors(MyAllowSpecificOrigins);
   }
   ```
   
+  <br/>
   
   ## Add or Update Single
   
@@ -246,7 +253,7 @@ app.UseCors(MyAllowSpecificOrigins);
       var item = await UpsertAsync(new PersonModel { Name = "Moe" });
   ```
 
-  
+  <br/>
   ## Add or Update Multiple
   
   Adds new records if the entities don't exist, otherwise it updates the existing records.
@@ -259,7 +266,8 @@ app.UseCors(MyAllowSpecificOrigins);
   ```csharp
       var items = await UpsertAsync(listOfItems);
   ```
- 
+  
+ <br/>
   
   ## Delete Single
   
@@ -272,6 +280,10 @@ app.UseCors(MyAllowSpecificOrigins);
   ```csharp
       var deletedSuccessfully = await DeleteAsync(1);  
   ```
+  
+  <br/>
+  
+  <br/>
   
 # Additional notes
   
@@ -294,6 +306,8 @@ public class PersonService : Service<PersonModel>
 }
 ```
 
+  <br/>
+  
   ## Heads up
   
   If you plan on using this as an out-of-the-box solution, I'd highly recommend forking the project instead of cloning it directly from here. This is very much so a work-in-progress, and it will likely change. This is not a stable, production-ready product yet, as ideas are being experimented with and improved upon. This project does not make any promises regarding security or stability of data access. You'll need to rely on applying security measures (auth, roles, etc) to the data access in API controllers and database operations as you normally would elsewhere. 
