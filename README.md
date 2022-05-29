@@ -164,7 +164,7 @@ app.UseCors(MyAllowSpecificOrigins);
   
   ## Get By [property]
   
-  Gets a list of ```T``` items where any of the type's properties match ```value```
+  Gets a list of ```T``` items where the given property matches ```value```
   ```csharp
       Task<IEnumerable<T>> GetAsync
           Expression<Func<T, object?>> propertyExpr, 
