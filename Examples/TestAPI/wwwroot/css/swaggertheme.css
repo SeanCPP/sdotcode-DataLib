@@ -65,7 +65,7 @@ p {
 }
 
 .swagger-ui .opblock .opblock-section-header {
-    background: rgba(100, 100, 100, 0.8) !important;
+    background: rgba(60, 60, 60, 0.8) !important;
     color: var(--text-color) !important;
 }
 
