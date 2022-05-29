@@ -90,6 +90,7 @@ If you need to add role authorization to any controller method, you can always o
 [Authorize]
 public override Task<ActionResult> Upsert([FromBody] IEnumerable<PersonModel> items) => base.Upsert(items);
 ```
+  <br/>
 
 ## Wiring up the DI
   
@@ -126,10 +127,168 @@ var app = builder.Build();
 // Later on...
 app.UseCors(MyAllowSpecificOrigins);
 ```
+  <br/>
+
+ # API Reference
   
-## Additional notes
+  <br/>
   
-  ### Error Handling
+  ## Get Single By Id
+  
+  Gets a single instance of ```T``` based on the ```id```
+  ```csharp 
+  Task<T> GetAsync
+       int id
+  ```   
+ 
+  Example: 
+  ```csharp 
+  var item = await MyService.GetAsync(id);
+  ```
+  <br/>
+ 
+  ## Get All (paginated)
+  
+  Gets a list of ```T``` items based on pagination details (get all)
+  ```csharp
+  Task<IEnumerable<T>> GetAsync
+       PagingInfo? pagingOptions = null
+  ```
+  
+  Example:
+  ```csharp
+      var items = await GetAsync(); // Get All
+      var items = await GetAsync(new PagingInfo { Page = 0, PageSize = 25 }); // Paging options
+  ```
+  <br/>
+  
+  ## Get By [property]
+  
+  Gets a list of ```T``` items where the given property matches ```value```
+  ```csharp
+      Task<IEnumerable<T>> GetAsync
+          Expression<Func<T, object?>> propertyExpr, 
+          object value, 
+          PagingInfo? pagingOptions = null
+ ```
+  
+  Example:
+  ```csharp
+      var items = await GetAsync(x => x.Name, "Moe"); // Get Any PersonModel items with the Name "Moe"
+  ```
+  
+  <br/>
+  
+  # Search
+  
+  
+  ## "Single-textbox" Search
+  
+  Searches for a list of items where any of the given properties contain ```query```
+  **Note** This will only search properties that are marked with the ```[Searchable]``` attribute.
+  ```csharp
+    Task<IEnumerable<T>> SearchAsync
+        string query,
+        PagingInfo? pagingOptions = null, 
+        params Expression<Func<T, object>>[] propertiesToSearch
+  ```
+  
+  Example:
+  ```csharp
+      var items = await SearchAsync("Moe", pagingOptions: default, x => x.Name, x => x.Id); // Searches Name and Id properties for "Moe"
+  ```
+  
+  <br/>
+  
+  ## "Multi-textbox" / Form Search
+  
+  Searches for a list of items where each each property in ```SearchType``` is compared against the corresponding property in ```T```
+  **Note** This will only search properties that have ```[Searchable]``` attribute. If the Entity type ```T``` doesn't contain a property inside your Search Model, then the search on that property will be skipped and no error will be thrown.
+```csharp
+    Task<IEnumerable<T>> SearchAsync<SearchType>
+          SearchType searchModel, 
+          PagingInfo? pagingOptions = null
+  ```
+  
+  Example:
+  ```csharp
+  class PersonSearchModel
+  {
+      public string? Name { get; set; }
+  }
+  
+  // Later...
+  <div class="form-group">
+      <label for="formName">Name</label>
+      <input id="formName" class="form-control" type="text" @bind-value=searchModel.Name />
+  </div>
+  <button class="btn btn-primary" @onclick=FormSearch>Search</button>
+  
+  @code {
+    [Inject] Service<PersonModel>? service { get; set; }
+
+    private PersonSearchModel searchModel = new();
+
+    IEnumerable<PersonModel> results = new List<PersonModel>();
+
+    private async Task FormSearch()
+    {
+        results = await service!.SearchAsync(searchModel, pagingOptions: default);
+    }
+  }
+  ```
+  
+  <br/>
+  
+  ## Add or Update Single
+  
+  Adds a new record if the entity doesn't exist, otherwise it updates the existing record.
+  ```csharp
+    public Task<T> UpsertAsync 
+          T entity
+  ```
+  
+   Example:
+  ```csharp
+      var item = await UpsertAsync(new PersonModel { Name = "Moe" });
+  ```
+
+  <br/>
+  
+  ## Add or Update Multiple
+  
+  Adds new records if the entities don't exist, otherwise it updates the existing records.
+   ```csharp 
+    public Task<IEnumerable<T>> UpsertAsync
+        IEnumerable<T> items
+  ``` 
+  
+  Example:
+  ```csharp
+      var items = await UpsertAsync(listOfItems);
+  ```
+  
+ <br/>
+  
+  ## Delete Single
+  
+  Delete item by Id
+  ```csharp 
+    public Task<bool> DeleteAsync(int id)
+  ```
+  
+   Example:
+  ```csharp
+      var deletedSuccessfully = await DeleteAsync(1);  
+  ```
+  
+  <br/>
+  
+  <br/>
+  
+# Additional notes
+  
+  ## Error Handling
   
   A side effect to the way this is designed is that debugging your data access layer while developing actually becomes much simpler.
   If you override the ```OnException(Exception ex)``` method in your Service class and leave a breakpoint inside it, you will automatically hit the stop _if a data access error occurs in any **application** in your solution during runtime._ This is equivilent to setting a breakpoint in every ```catch(){ }``` statement in your Entity's repository. 
@@ -148,8 +307,12 @@ public class PersonService : Service<PersonModel>
 }
 ```
 
-  ### Heads up
+  <br/>
+  
+  ## Heads up
   
   If you plan on using this as an out-of-the-box solution, I'd highly recommend forking the project instead of cloning it directly from here. This is very much so a work-in-progress, and it will likely change. This is not a stable, production-ready product yet, as ideas are being experimented with and improved upon. This project does not make any promises regarding security or stability of data access. You'll need to rely on applying security measures (auth, roles, etc) to the data access in API controllers and database operations as you normally would elsewhere. 
   
   This can become a stable production-ready product with the help of community contributions. If this seems like something you or your company could benefit from, feel free to get involved!
+  
+
