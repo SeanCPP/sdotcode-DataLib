@@ -102,3 +102,11 @@ p {
 .swagger-ui .model .property.primitive {
     color: #CbCbCb;
 }
+.swagger-ui textarea :disabled {
+    background: #41444e !important;
+    color: var(--text-color) !important;
+}
+.swagger-ui textarea {
+    background: #41444e !important;
+    color: var(--text-color) !important;
+}
