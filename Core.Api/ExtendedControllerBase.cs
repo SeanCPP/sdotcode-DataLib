@@ -14,19 +14,19 @@ namespace sdotcode.DataLib.Core.Api
         }
 
         [HttpGet]
-        [Route("Find/{propertyName}/{value}")]
-        public virtual async Task<ActionResult> Find([FromRoute] string propertyName,
-            [FromRoute] string value,
-            [FromQuery] int page = 0,
-            [FromQuery] int pageSize = Defaults.PageSize)
-        {
-            return Ok(await Service.GetAsync(propertyName, value, new PagingInfo { Page = page, PageSize = pageSize }));
-        }
-
-        [HttpGet]
         public virtual async Task<ActionResult> Get(int page = 0, int pageSize = 10)
         {
             return Ok(await Service.GetAsync(new PagingInfo { Page = page, PageSize = pageSize }));
+        }
+
+        [HttpGet]
+        [Route("Find/{propertyName}/{value}")]
+        public virtual async Task<ActionResult> Find([FromRoute] string propertyName, 
+            [FromRoute] string value, 
+            [FromQuery] int page = 0, 
+            [FromQuery] int pageSize = Defaults.PageSize)
+        {
+            return Ok(await Service.GetAsync(propertyName, value, new PagingInfo { Page = page, PageSize = pageSize }));
         }
 
         [HttpGet]
@@ -38,6 +38,16 @@ namespace sdotcode.DataLib.Core.Api
                 return await Get(page, pageSize);
             }
             return Ok(await Service.SearchAsync(searchParams, new PagingInfo { Page = page, PageSize = pageSize }));
+        }
+
+        [HttpPut]
+        public virtual async Task<ActionResult> Upsert([FromBody] IEnumerable<T> items)
+        {
+            if (items is null || !items.Any())
+            {
+                return BadRequest("Invalid item passed");
+            }
+            return Ok(await Service.UpsertAsync(items));
         }
 
         [HttpDelete]
@@ -52,16 +62,6 @@ namespace sdotcode.DataLib.Core.Api
             {
                 return BadRequest();
             }
-        }
-
-        [HttpPut]
-        public virtual async Task<ActionResult> Upsert([FromBody] IEnumerable<T> items)
-        {
-            if (items is null || !items.Any())
-            {
-                return BadRequest("Invalid item passed");
-            }
-            return Ok(await Service.UpsertAsync(items));
         }
     }
 }
