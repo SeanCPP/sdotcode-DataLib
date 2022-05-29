@@ -1,0 +1,104 @@
+﻿/*
+    SwaggerUI Dark Theme
+    Author: Sean Franklin (sdotcode)
+    Year: 2022
+*/
+
+* {
+    --text-color: #cfcfcf;
+}
+
+body {
+    background-color: #272626 !important;
+    color: var(--text-color) !important;
+}
+
+.swagger-ui a.nostyle, .swagger-ui a.nostyle:visited {
+    color: var(--text-color) !important;
+}
+
+.swagger-ui .info .title {
+    color: var(--text-color) !important;
+}
+
+.swagger-ui .parameter__name {
+    color: var(--text-color) !important;
+}
+
+.swagger-ui table thead tr td, .swagger-ui table thead tr th {
+    color: var(--text-color) !important;
+}
+
+.swagger-ui .response-col_status {
+    color: var(--text-color) !important;
+}
+
+.swagger-ui .parameter__type {
+    color: var(--text-color) !important;
+}
+
+.swagger-ui .prop-format {
+    color: var(--text-color) !important;
+}
+
+.swagger-ui .parameter__extension, .swagger-ui .parameter__in {
+    color: #f0f0f0;
+}
+
+p {
+    color: var(--text-color) !important;
+}
+
+.swagger-ui .opblock-description-wrapper p, .swagger-ui .opblock-external-docs-wrapper p, .swagger-ui .opblock-title_normal p {
+    color: var(--text-color) !important;
+}
+
+.swagger-ui .tab li {
+    color: var(--text-color) !important;
+}
+.swagger-ui .responses-inner h4, .swagger-ui .responses-inner h5 {
+    color: var(--text-color) !important;
+}
+
+.swagger-ui .response-col_links {
+    color: var(--text-color) !important;
+}
+
+.swagger-ui .opblock .opblock-section-header {
+    background: rgba(100, 100, 100, 0.8) !important;
+    color: var(--text-color) !important;
+}
+
+.swagger-ui .opblock .opblock-section-header h4 {
+    color: var(--text-color) !important;
+}
+
+.swagger-ui .btn {
+    background: transparent;
+    color: var(--text-color) !important;
+}
+
+.swagger-ui section.models {
+    border: 1px solid rgba(255,255,255,.3) !important;
+}
+.swagger-ui section.models .model-container {
+    background: rgba(0,0,0,.25) !important;
+}
+
+.swagger-ui .parameter__name.required span {
+    color: rgb(255,100,100) !important;
+}
+.swagger-ui .parameter__name.required:after {
+    color: rgba(255,100,100,1) !important;
+}
+
+.swagger-ui .model-title {
+    color: #F0F0F0 !important;
+}
+.swagger-ui .model {
+    color: var(--text-color) !important;
+}
+
+.swagger-ui .model .property.primitive {
+    color: #CbCbCb;
+}
