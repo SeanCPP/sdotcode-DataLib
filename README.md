@@ -203,7 +203,7 @@ app.UseCors(MyAllowSpecificOrigins);
   ## "Multi-textbox" / Form Search
   
   Searches for a list of items where each each property in ```SearchType``` is compared against the corresponding property in ```T```
-  **Note** This will only search properties that have ```[Searchable]``` attribute. If the Entity type ```T``` doesn't contain a property inside your Search Model, then the comparison will just be skipped and no error will be thrown.
+  **Note** This will only search properties that have ```[Searchable]``` attribute. If the Entity type ```T``` doesn't contain a property inside your Search Model, then the search on that property will be skipped and no error will be thrown.
 ```csharp
     Task<IEnumerable<T>> SearchAsync<SearchType>
           SearchType searchModel, 
