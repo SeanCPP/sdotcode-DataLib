@@ -190,7 +190,7 @@ app.UseCors(MyAllowSpecificOrigins);
   
   Example:
   ```csharp
-      var items = await SearchAsync("Moe", pagingOptions: default, x => x.Name, x.Id); // Searches Name and Id properties for "Moe"
+      var items = await SearchAsync("Moe", pagingOptions: default, x => x.Name, x => x.Id); // Searches Name and Id properties for "Moe"
   ```
   
   
