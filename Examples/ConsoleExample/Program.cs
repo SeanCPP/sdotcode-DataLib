@@ -1,6 +1,6 @@
-﻿using sdotcode.DataLib.Examples;
-using sdotcode.Repository;
-using sdotcode.Repository.DataStores;
+﻿using sdotcode.DataLib.Core;
+using sdotcode.DataLib.Core.DataStores;
+using sdotcode.DataLib.Examples;
 
 var service = Factory.GetPersonService();
 
@@ -14,7 +14,7 @@ foreach(var person in people)
 
 Console.ReadKey();
 
-var add = await service.AddOrUpdateAsync(new PersonModel {  Id=1, Name = "Gary?"});
+var add = await service.UpsertAsync(new PersonModel {  Id=1, Name = "Gary?"});
 Console.WriteLine(add.Name);
 
 Console.ReadKey();
@@ -30,7 +30,7 @@ public static class Factory
 {
     public static Service<PersonModel> GetPersonService()
     {
-        return new PersonService(GetDataStore<PersonModel>());
+        return new Service<PersonModel>(GetDataStore<PersonModel>());
     }
 
     public static IDataStore<T> GetDataStore<T>()
