@@ -3,7 +3,7 @@ using System.Reflection;
 
 namespace sdotcode.DataLib.Core;
 
-public abstract class Service<T> : ErrorProne where T : IStoredItem, new()
+public class Service<T> : ErrorProne where T : IStoredItem, new()
 {
     protected IDataStore<T> DataStore { get; init; }
 

@@ -10,6 +10,14 @@ namespace sdotcode.DataLib.Core
 {
     public static class ServiceExtensions
     {
+        public static IServiceCollection AddWebApiRepositoryFor<TEntity>(this IServiceCollection services)
+            where TEntity : IStoredItem, new()
+        { 
+            services.AddScoped<IDataStore<TEntity>, HttpClientDataStore<TEntity>>();
+            services.AddScoped<Service<TEntity>>();
+            return services;
+        }
+
         public static IServiceCollection AddWebApiRepository<TEntity, TServiceImpl>(this IServiceCollection services)
             where TEntity : IStoredItem, new()
             where TServiceImpl : Service<TEntity>
