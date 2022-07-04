@@ -1,7 +1,7 @@
 using sdotcode.DataLib.Core;
 using sdotcode.DataLib.Core.DataStores;
 using sdotcode.DataLib.Examples;
-
+using sdotcode.DataLib.Examples.Entities;
 
 var builder = WebApplication.CreateBuilder(args);
 

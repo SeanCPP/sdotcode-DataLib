@@ -1,6 +1,7 @@
 ﻿using sdotcode.DataLib.Core;
 using sdotcode.DataLib.Core.DataStores;
 using sdotcode.DataLib.Examples;
+using sdotcode.DataLib.Examples.Entities;
 
 var service = Factory.GetPersonService();
 
@@ -24,7 +25,6 @@ if (result)
 {
     Console.WriteLine("Deleted successfully.");
 }
-
 
 public static class Factory
 {

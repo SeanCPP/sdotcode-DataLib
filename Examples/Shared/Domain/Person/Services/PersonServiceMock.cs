@@ -1,5 +1,6 @@
 ﻿using sdotcode.DataLib.Core;
 using sdotcode.DataLib.Core.DataStores;
+using sdotcode.DataLib.Examples.Entities;
 
 namespace sdotcode.DataLib.Examples;
 
