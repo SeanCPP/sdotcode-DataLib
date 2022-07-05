@@ -12,8 +12,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddSingleton<IDataStore<PersonModel>, InMemoryDataStore<PersonModel>>();
-builder.Services.AddSingleton<Service<PersonModel>, PersonServiceMock>();
+builder.Services.AddInMemoryRepository<PersonModel, PersonServiceMock>();
 
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 builder.Services.AddCors(options =>
