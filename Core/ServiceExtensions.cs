@@ -171,7 +171,7 @@ namespace sdotcode.DataLib.Core
         public static IServiceCollection AddInMemoryRepository<TEntity, TServiceImpl>(this IServiceCollection services, 
             ServiceLifetime lifetime = ServiceLifetime.Singleton)
             where TEntity : IStoredItem, new()
-            where TServiceImpl : Service<TEntity>, new()
+            where TServiceImpl : Service<TEntity>
         {
             services.Register<TEntity, InMemoryDataStore<TEntity>, TServiceImpl>(lifetime);
             return services;
